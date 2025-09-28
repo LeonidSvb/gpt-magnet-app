@@ -55,6 +55,10 @@ END ADR_AGENT_PROTOCOL
 
 | ID   | Title                                                        | Date       | Status   | Supersedes | Superseded by |
 | ---- | ------------------------------------------------------------ | ---------- | -------- | ---------- | ------------- |
+| 0008 | [Test Infrastructure Integration](#adr-0008)                 | 2025-09-28 | Accepted | —          | —             |
+| 0007 | [Feature Flag Architecture for Business Types](#adr-0007)   | 2025-09-28 | Accepted | —          | —             |
+| 0006 | [Alfie Design System Import](#adr-0006)                     | 2025-09-28 | Accepted | —          | —             |
+| 0005 | [MVP Question Architecture Rewrite](#adr-0005)              | 2025-09-28 | Accepted | —          | —             |
 | 0004 | [PostHog + Supabase Dual Analytics Architecture](#adr-0004) | 2025-01-20 | Accepted | —          | —             |
 | 0003 | [Supabase Three-Table Architecture (Sessions, Leads, Results)](#adr-0003) | 2025-01-20 | Accepted | —          | —             |
 | 0002 | [OpenAI GPT-4o-mini for AI Result Generation](#adr-0002)    | 2025-01-20 | Accepted | —          | —             |
@@ -300,5 +304,178 @@ Use dual analytics architecture where each tool handles its strength:
 - Supabase stores only business-critical data
 - No duplication of user answers in PostHog
 - Session IDs used to correlate data across systems
+
+---
+
+## ADR-0005 — MVP Question Architecture Rewrite
+
+<a id="adr-0005"></a>
+**Date**: 2025-09-28
+**Status**: Accepted
+**Owner**: Development Team
+
+### Context
+
+Original questions focused on assessing the coach themselves rather than understanding their clients. For effective lead magnet generation, we need questions about the coach's CLIENT demographics, pain points, and desired transformations. This is a meta-level product where coaches get value immediately and then want implementation services.
+
+### Alternatives
+
+- **Keep generic assessment approach**: Simple but doesn't generate personalized lead magnets
+- **Mix coach + client questions**: Confusing and unfocused
+- **Pure client-focused questions**: Clear purpose but requires complete rewrite
+- **External questionnaire service**: Adds dependency and reduces control
+
+### Decision
+
+Completely rewrite questions.ts to focus on coach's CLIENTS rather than coaches:
+- 10 optimized questions for lead magnet generation
+- Target: client demographics, pain points, transformations, unique methods
+- Smart field sizing (small/medium/large) based on expected answer length
+- Built-in hints and help text for better answer quality
+- Modular business type structure: Soft Coach, Hard Coach, Agency, Other Professional
+
+### Consequences
+
+- **Pros**: Lead magnets actually personalized to coach's niche, meta-product demonstrates value immediately, clear qualification questions for segmentation, smart UX reduces friction
+- **Cons / risks**: Complete rewrite requires extensive testing, potential bugs in new question logic, need to validate with real coaches, current system completely replaced
+- **Supersedes**: —
+- **Superseded by**: —
+
+### Compliance / Verification
+
+- All 10 questions focus on client characteristics, not coach assessment
+- Smart hints guide users to better answers
+- Field sizes optimize for expected content length
+- Business type selector works with feature flag system
+
+---
+
+## ADR-0006 — Alfie Design System Import
+
+<a id="adr-0006"></a>
+**Date**: 2025-09-28
+**Status**: Accepted
+**Owner**: Development Team
+
+### Context
+
+Need battle-tested UI components to avoid "bumps" already solved in outdoor project. Current basic components lack proper validation, user guidance, and responsive design. Outdoor project has proven QuestionCard and ProgressBar components with iframe compatibility.
+
+### Alternatives
+
+- **Build from scratch**: Full control but repeat solved problems
+- **Use generic UI library**: Consistent but not optimized for questionnaires
+- **Import specific components from outdoor**: Proven solutions, fast implementation
+- **Copy-paste and modify**: Risk of introducing bugs from incomplete copying
+
+### Decision
+
+Import and adapt Alfie design system components from outdoor project:
+- **QuestionCard.tsx**: Auto-advance for single choice, proper validation, all field types
+- **ProgressBar.tsx**: Emoji milestones, animated progress dots, celebration effects
+- **Complete CSS system**: Alfie color palette, component styles, iframe compatibility
+- **Smart interaction patterns**: Back/next navigation, loading states, error handling
+
+### Consequences
+
+- **Pros**: Proven components with edge cases handled, consistent Alfie branding, iframe compatibility tested, responsive design included, saves weeks of development
+- **Cons / risks**: Dependency on outdoor project patterns, need to maintain consistency across projects, some over-engineering for simple use cases
+- **Supersedes**: —
+- **Superseded by**: —
+
+### Compliance / Verification
+
+- QuestionCard supports all question types (text, single-choice, multiple-choice, multi-with-other)
+- ProgressBar shows proper milestone progression
+- CSS variables work consistently across components
+- Iframe embedding works without style conflicts
+
+---
+
+## ADR-0007 — Feature Flag Architecture for Business Types
+
+<a id="adr-0007"></a>
+**Date**: 2025-09-28
+**Status**: Accepted
+**Owner**: Development Team
+
+### Context
+
+Need to launch MVP with single business type (Soft Coach) for validation, then gradually activate additional types. Hard-coding business types would require code changes for each activation. Feature flag system allows controlled rollout without deployments.
+
+### Alternatives
+
+- **All business types active**: Risk of untested flows going live
+- **Hard-coded single type**: Requires code changes for expansion
+- **External feature flag service**: Adds complexity and dependency
+- **Simple boolean flags per type**: Built-in control, easy to expand
+
+### Decision
+
+Implement business type feature flags using getActiveBusinessTypes() function:
+- **Soft Coach**: ACTIVE - Personal coaches working with individuals
+- **Hard Coach**: DISABLED - Business coaches working with entrepreneurs
+- **Agency**: DISABLED - Marketing agencies and teams
+- **Other Professional**: DISABLED - Consultants, therapists, other professionals
+
+Each type has complete question set prepared but activation controlled by feature flags.
+
+### Consequences
+
+- **Pros**: Safe MVP launch with single validated flow, easy activation without code deployment, prepared for all business types, clean abstraction for future types
+- **Cons / risks**: Unused code in production, need to maintain all question sets even if not active, potential confusion between different business type flows
+- **Supersedes**: —
+- **Superseded by**: —
+
+### Compliance / Verification
+
+- getActiveBusinessTypes() returns only enabled business types
+- BusinessTypeSelector shows only active options
+- All question sets remain in code but only active ones accessible
+- Feature flags easily toggled in single location
+
+---
+
+## ADR-0008 — Test Infrastructure Integration
+
+<a id="adr-0008"></a>
+**Date**: 2025-09-28
+**Status**: Accepted
+**Owner**: Development Team
+
+### Context
+
+Complete rewrite of question system requires comprehensive manual testing. Need easy way to test all business types, question flows, validation, and final output without going through full production flow. Must verify analytics tracking and component interactions.
+
+### Alternatives
+
+- **Production testing only**: Risks breaking live system
+- **Separate test environment**: Complex setup and maintenance
+- **Built-in test page**: Easy access, controlled environment
+- **Unit tests only**: Misses integration and user experience issues
+
+### Decision
+
+Implement comprehensive test infrastructure with /test-questions route:
+- **TestQuestionsPage**: Full flow from business type selection to final answers
+- **JSON output display**: Verify answer structure and validation
+- **Analytics tracking**: All PostHog events fired in test mode
+- **Reset functionality**: Easy to test multiple scenarios
+- **Console logging**: Debug answer processing and validation
+
+### Consequences
+
+- **Pros**: Easy manual testing of complete flows, JSON output validates data structure, analytics events testable, quick iteration on UX issues, accessible to non-technical team members
+- **Cons / risks**: Test code in production bundle (minimal impact), manual testing still required, need to remember to test after changes, potential for test-production differences
+- **Supersedes**: —
+- **Superseded by**: —
+
+### Compliance / Verification
+
+- /test-questions route accessible and functional
+- All business types testable (active and inactive)
+- JSON output matches expected answer structure
+- Analytics events fire correctly in test mode
+- Reset button works properly for repeated testing
 
 ---
