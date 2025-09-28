@@ -1,36 +1,204 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# GPT Lead Magnet
 
-## Getting Started
+Custom GPT-powered lead magnet application with web and Telegram support.
 
-First, run the development server:
+## Стек технологий
+
+- **Frontend:** Next.js 14 (App Router), React 18, TypeScript
+- **Styling:** Tailwind CSS, Radix UI
+- **Backend:** Next.js API Routes (Serverless)
+- **Database:** Supabase (PostgreSQL)
+- **AI:** OpenAI GPT-4o-mini
+- **Analytics:** PostHog
+- **Integrations:** n8n (webhooks)
+- **Deployment:** Vercel
+
+## Быстрый старт
+
+### 1. Установка зависимостей
+
+```bash
+npm install
+```
+
+### 2. Настройка окружения
+
+Создай `.env.local` на основе `.env.local.example`:
+
+```bash
+cp .env.local.example .env.local
+```
+
+Заполни переменные окружения:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=https://xxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGc...
+
+OPENAI_API_KEY=sk-...
+
+NEXT_PUBLIC_POSTHOG_KEY=phc_...
+NEXT_PUBLIC_POSTHOG_HOST=https://app.posthog.com
+
+N8N_WEBHOOK_URL=https://your-n8n-instance.com/webhook/...
+
+TELEGRAM_BOT_TOKEN=123456:ABC-DEF...
+```
+
+### 3. Настройка Supabase
+
+1. Зарегистрируйся на [supabase.com](https://supabase.com)
+2. Создай новый проект
+3. Выполни SQL из `sql/001_init.sql` в Supabase SQL Editor
+4. Скопируй URL и anon key в `.env.local`
+
+### 4. Запуск dev сервера
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Открой [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Структура проекта
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+gpt-magnet/
+├── app/
+│   ├── widget/              # Универсальный виджет (веб + Telegram)
+│   │   ├── page.tsx
+│   │   └── components/
+│   │       ├── Wizard.tsx         # Пошаговый опросник
+│   │       ├── ResultView.tsx     # Отображение результата
+│   │       └── LeadForm.tsx       # Форма захвата email
+│   │
+│   ├── telegram/            # Telegram Mini App обертка
+│   │   └── page.tsx
+│   │
+│   ├── dashboard/           # Dashboard для просмотра лидов
+│   │   ├── page.tsx
+│   │   ├── leads/
+│   │   ├── analytics/
+│   │   └── settings/
+│   │
+│   └── api/                 # API Routes
+│       ├── submit/route.ts        # Сохранение ответов
+│       ├── generate/route.ts      # Генерация через OpenAI
+│       ├── lead/route.ts          # Сохранение лида + n8n
+│       └── telegram/webhook/route.ts  # Telegram Bot webhook
+│
+├── components/
+│   ├── ui/                  # Переиспользуемые UI компоненты
+│   └── shared/              # Общие компоненты
+│
+├── lib/
+│   ├── supabase.ts          # Supabase client
+│   ├── openai.ts            # OpenAI client
+│   ├── prompts.ts           # AI prompt templates
+│   ├── analytics.ts         # PostHog wrapper
+│   ├── n8n.ts               # n8n webhook sender
+│   ├── schema.ts            # Zod schemas для валидации
+│   └── utils.ts             # Utility функции
+│
+├── types/
+│   ├── index.ts             # Основные типы
+│   └── database.ts          # Supabase типы
+│
+├── sql/
+│   └── 001_init.sql         # Начальная схема БД
+│
+└── public/
+    └── embed.js             # Скрипт для встраивания виджета
+```
 
-## Learn More
+## Основные фичи
 
-To learn more about Next.js, take a look at the following resources:
+### ✅ Универсальный виджет
+- Работает как веб-версия (iframe)
+- Работает как Telegram Mini App
+- Единая кодовая база
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### ✅ AI-генерация результатов
+- OpenAI GPT-4o-mini
+- Кастомные промпты через `lib/prompts.ts`
+- Markdown форматирование
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### ✅ Захват лидов
+- Email для веб-версии
+- Telegram ID для Telegram версии
+- Автоматическая отправка в CRM через n8n
 
-## Deploy on Vercel
+### ✅ Analytics
+- PostHog events tracking
+- Конверсия воронки
+- A/B тестирование (готово к использованию)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Разработка
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Добавление новых вопросов
+
+Измени конфигурацию в `app/widget/page.tsx`:
+
+```tsx
+const questions: Question[] = [
+  {
+    id: 'question_1',
+    type: 'text',
+    question: 'Ваш вопрос?',
+    placeholder: 'Введите ответ...',
+    required: true,
+  },
+]
+```
+
+### Кастомизация AI промпта
+
+Измени `lib/prompts.ts`:
+
+```typescript
+export const DEFAULT_RESULT_TEMPLATE = `
+Based on the following answers:
+{{question_1}}
+{{question_2}}
+
+Generate a personalized result...
+`
+```
+
+### Настройка Telegram бота
+
+1. Создай бота через [@BotFather](https://t.me/BotFather)
+2. Получи `TELEGRAM_BOT_TOKEN`
+3. Настрой webhook: `/setMenuButton` → Web App URL
+4. Добавь токен в `.env.local`
+
+## Деплой
+
+### Vercel (рекомендуется)
+
+```bash
+npm install -g vercel
+vercel
+```
+
+Добавь environment variables в Vercel dashboard.
+
+### Встраивание виджета на сайт
+
+```html
+<div id="gpt-magnet-widget"></div>
+<script src="https://your-domain.vercel.app/embed.js"></script>
+```
+
+## TODO для доработки
+
+- [ ] Реализовать логику в `app/widget/components/Wizard.tsx`
+- [ ] Добавить UI компоненты в `components/ui/`
+- [ ] Настроить dashboard в `app/dashboard/`
+- [ ] Добавить PDF генерацию для результатов
+- [ ] Настроить Telegram Bot в `app/api/telegram/webhook/route.ts`
+- [ ] Добавить тесты
+
+## Лицензия
+
+MIT

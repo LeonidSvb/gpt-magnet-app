@@ -1,0 +1,81 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+
+# Outdoorable TripGuide Widget
+
+**TL;DR:** For outdoor travelers, build an embeddable widget (Webflow) that generates a personalized Trip Guide and connects them with the right expert, so they can plan their trip faster and with confidence.
+
+---
+
+## Users & Value
+
+- **Primary user / persona:** Outdoor enthusiasts (mainly from US/EU) looking to plan trips more efficiently.  
+- **Jobs-to-be-done (JTBD):**
+  - When I don’t know where to travel, I want tailored recommendations, so I can choose a destination.  
+  - When I already know where I want to go, I want a clear, structured guide, so I can plan my trip smoothly.  
+  - When I’m exploring options, I want to easily connect with a local expert, so I can get trusted advice.  
+
+---
+
+## Success Metrics
+
+- **Primary Goal:** Users receive a personalized Trip Guide, leave their e-mail, and get matched with an expert.  
+- **Success Criteria:**  
+  - % of users who complete the questionnaire → receive a Trip Guide (target: >50%)  
+  - % of users who submit e-mail (target: >30%)  
+  - % of users who view expert card (target: >20%)  
+
+---
+
+## Scope
+
+| Must-have (MVP)                                                                 | Nice-to-have (Later)                        | Explicitly Out (Not now)              |
+| -------------------------------------------------------------------------------- | ------------------------------------------- | ------------------------------------- |
+| Two flows: *Inspire Me* and *I Know Where to Go*                                 | Calendar integration (Calendly links)       | Native mobile app                     |
+| Trip Guide generation via OpenAI (formatted for readability)                     | Expert video messages (Loom, async consult) | Complex marketplace functionality     |
+| Partial access to Trip Guide (50%) until e-mail is submitted                     | Payments integration                        | Social network/community features     |
+| Collect e-mail + answers → send to GoHighLevel CRM                               | Expert reviews & rating system              | VR/AR features                        |
+| Expert matching via Airtable (tags + OpenAI selection logic)                     | A/B testing of flows and copy               | Offline events                        |
+| Easy embed in Webflow, responsive for mobile & desktop                           | AI-driven chat with expert                  |                                       |
+
+- **Definition of Done (MVP):**
+  - [ ] User can complete one of the two flows.  
+  - [ ] Personalized Trip Guide is generated and displayed in a clean format.  
+  - [ ] After ~50% scroll, user is prompted to submit e-mail.  
+  - [ ] E-mail + answers are successfully sent to GoHighLevel.  
+  - [ ] Expert card (from Airtable) is displayed with avatar, name, description, and link.  
+  - [ ] Widget runs without critical bugs on Webflow (desktop + mobile).  
+
+---
+
+## Tech Stack
+
+### Frontend:
+- React (Next.js on Vercel for deployment)  
+- Existing CSS design (from previous iteration) adapted for the widget  
+- Tailwind optional (only if needed for responsiveness/adaptation)  
+
+### Backend:
+- Vercel Functions (Node.js)  
+- OpenAI API → generate Trip Guide + tagging for expert matching  
+- Airtable API → query experts based on tags  
+- GoHighLevel API → store e-mails and user answers  
+
+### Database:
+- None. GoHighLevel CRM is the **only source of truth** for user data.  
+- Airtable is the source of truth for expert directory.  
+
+---
+
+## Open Questions
+
+1. **Monetization:** Should MVP already include CTA to book a paid consultation with experts?  
+2. **Trip Guide format:** Text-only, or enriched with maps/links (Google Maps, AllTrails, etc.)?  
+3. **Expert card content:** Minimum set (avatar, name, description, link) — add pricing/availability now or later?  
+4. **Follow-up:** After e-mail submission, do we send guide/summary via e-mail automatically, or keep it inside the widget only for MVP?  
+5. **Frontend stack:** Stick with Next.js + Vercel for consistency, or simplify with pure React embed since Webflow is the host?  
+
+---
