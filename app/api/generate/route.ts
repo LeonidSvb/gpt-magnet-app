@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const answers = session.answers as Record<string, any>
+    const answers = session.answers as Record<string, unknown>
     const prompt = buildPrompt(
       Object.entries(answers).map(([key, value]) => ({
         question_id: key,

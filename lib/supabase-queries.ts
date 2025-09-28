@@ -2,14 +2,11 @@ import { supabase } from './supabase'
 import type { Database } from '@/types/database'
 
 type Session = Database['public']['Tables']['sessions']['Row']
-type SessionInsert = Database['public']['Tables']['sessions']['Insert']
 type SessionUpdate = Database['public']['Tables']['sessions']['Update']
 
 type Lead = Database['public']['Tables']['leads']['Row']
-type LeadInsert = Database['public']['Tables']['leads']['Insert']
 
 type Result = Database['public']['Tables']['results']['Row']
-type ResultInsert = Database['public']['Tables']['results']['Insert']
 
 export async function createSession(data: {
   source?: 'web' | 'telegram' | 'iframe'
@@ -49,7 +46,7 @@ export async function getSession(sessionId: string): Promise<Session | null> {
 
 export async function updateSessionAnswers(
   sessionId: string,
-  answers: Record<string, any>,
+  answers: Record<string, unknown>,
   currentStep?: number
 ): Promise<void> {
   const update: SessionUpdate = {

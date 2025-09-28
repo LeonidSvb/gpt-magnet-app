@@ -7,7 +7,7 @@ interface WidgetProps {
   platform?: Platform
 }
 
-export function WidgetContent({ user: _user, platform = 'web' }: WidgetProps) {
+export function WidgetContent({ platform = 'web' }: WidgetProps) {
   // TODO: Implement widget functionality
   console.log('Platform:', platform)
 

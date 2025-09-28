@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
             platform: sessionData.session.source || 'web',
             created_at: lead.created_at,
           },
-          Object.entries(sessionData.session.answers as Record<string, any>).map(
+          Object.entries(sessionData.session.answers as Record<string, unknown>).map(
             ([key, value]) => ({
               question_id: key,
               question_text: key,

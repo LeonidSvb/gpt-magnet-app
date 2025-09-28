@@ -5,7 +5,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     const { answers, source, total_steps } = body as {
-      answers?: Record<string, any>
+      answers?: Record<string, unknown>
       source?: 'web' | 'telegram' | 'iframe'
       total_steps?: number
     }

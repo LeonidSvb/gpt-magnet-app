@@ -7,7 +7,7 @@ interface WizardProps {
   onComplete: (answers: Answer[]) => void
 }
 
-export function Wizard({ questions: _questions, onComplete: _onComplete }: WizardProps) {
+export function Wizard(_props: WizardProps) {
   // TODO: Implement wizard logic
 
   return (
