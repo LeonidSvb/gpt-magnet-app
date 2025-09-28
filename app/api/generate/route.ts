@@ -1,63 +1,71 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { generateResult } from '@/lib/openai'
-import { buildPrompt, DEFAULT_RESULT_TEMPLATE } from '@/lib/prompts'
-import { getSession, createResult, completeSession } from '@/lib/supabase-queries'
+import { NextRequest, NextResponse } from 'next/server';
+import { generateResult } from '@/lib/openai';
+import { buildPrompt, DEFAULT_RESULT_TEMPLATE } from '@/lib/prompts';
+import { getSession, createResult, completeSession } from '@/lib/supabase-queries';
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { session_id } = body as { session_id: string }
+    const body = await request.json();
+    const { sessionId } = body as { sessionId: string };
 
-    if (!session_id) {
+    if (!sessionId) {
       return NextResponse.json(
-        { error: 'session_id is required' },
+        { error: 'sessionId is required' },
         { status: 400 }
-      )
+      );
     }
 
-    const session = await getSession(session_id)
+    const session = await getSession(sessionId);
     if (!session) {
       return NextResponse.json(
         { error: 'Session not found' },
         { status: 404 }
-      )
+      );
     }
 
-    const answers = session.answers as Record<string, unknown>
-    const prompt = buildPrompt(
-      Object.entries(answers).map(([key, value]) => ({
-        question_id: key,
-        question_text: key,
-        answer: value,
-      })),
-      DEFAULT_RESULT_TEMPLATE
-    )
+    const answers = session.answers as Record<string, unknown>;
+    const category = answers.category as string;
+    const niche = answers.niche as string;
 
-    const startTime = Date.now()
-    const markdown = await generateResult(prompt)
-    const generationTime = Date.now() - startTime
+    // Build prompt with category and niche context
+    const prompt = buildPrompt(
+      Object.entries(answers)
+        .filter(([key]) => !['category', 'niche'].includes(key))
+        .map(([key, value]) => ({
+          question_id: key,
+          question_text: key,
+          answer: value,
+        })),
+      DEFAULT_RESULT_TEMPLATE,
+      category,
+      niche
+    );
+
+    const startTime = Date.now();
+    const markdown = await generateResult(prompt);
+    const generationTime = Date.now() - startTime;
 
     const result = await createResult({
-      session_id,
+      session_id: sessionId,
       markdown,
       prompt_used: prompt,
       model: 'gpt-4o-mini',
       generation_time_ms: generationTime,
-    })
+    });
 
-    await completeSession(session_id)
+    await completeSession(sessionId);
 
     return NextResponse.json({
-      result: markdown,
-      session_id,
+      markdown,
+      sessionId,
       result_id: result.id,
       generation_time_ms: generationTime,
-    })
+    });
   } catch (error) {
-    console.error('Generate error:', error)
+    console.error('Generate error:', error);
     return NextResponse.json(
       { error: 'Failed to generate result' },
       { status: 500 }
-    )
+    );
   }
 }

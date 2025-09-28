@@ -1,40 +1,52 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { createSession, updateSessionAnswers } from '@/lib/supabase-queries'
+import { NextRequest, NextResponse } from 'next/server';
+import { createSession, updateSessionAnswers } from '@/lib/supabase-queries';
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { answers, source, total_steps } = body as {
-      answers?: Record<string, unknown>
-      source?: 'web' | 'telegram' | 'iframe'
-      total_steps?: number
+    const body = await request.json();
+    const { category, niche, answers, source } = body as {
+      category: string;
+      niche: string;
+      answers: Record<string, unknown>;
+      source?: 'web' | 'telegram';
+    };
+
+    // Validate required fields
+    if (!category || !niche || !answers) {
+      return NextResponse.json(
+        { error: 'Missing required fields: category, niche, answers' },
+        { status: 400 }
+      );
     }
 
-    const userAgent = request.headers.get('user-agent') || undefined
+    const userAgent = request.headers.get('user-agent') || undefined;
     const ip = request.headers.get('x-forwarded-for') ||
                request.headers.get('x-real-ip') ||
-               undefined
+               undefined;
 
+    // Create session with category and niche
     const session = await createSession({
       source: source || 'web',
-      total_steps,
       user_agent: userAgent,
       ip_address: ip,
-    })
+    });
 
-    if (answers && Object.keys(answers).length > 0) {
-      await updateSessionAnswers(session.id, answers)
-    }
+    // Update session with answers, category, and niche
+    await updateSessionAnswers(session.id, {
+      ...answers,
+      category,
+      niche
+    });
 
     return NextResponse.json({
-      session_id: session.id,
+      sessionId: session.id,
       session,
-    })
+    });
   } catch (error) {
-    console.error('Submit error:', error)
+    console.error('Submit error:', error);
     return NextResponse.json(
       { error: 'Failed to create session' },
       { status: 500 }
-    )
+    );
   }
 }

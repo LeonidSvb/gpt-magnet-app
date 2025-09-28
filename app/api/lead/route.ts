@@ -1,50 +1,50 @@
-import { NextRequest, NextResponse } from 'next/server'
-import { createLead, getSessionWithResult } from '@/lib/supabase-queries'
-import { sendToN8N } from '@/lib/n8n'
+import { NextRequest, NextResponse } from 'next/server';
+import { createLead, getSessionWithResult } from '@/lib/supabase-queries';
+import { sendToN8N } from '@/lib/n8n';
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
+    const body = await request.json();
     const {
-      session_id,
-      email,
-      telegram_id,
+      sessionId,
       name,
-      phone,
-      company,
+      contactType,
+      contactValue,
     } = body as {
-      session_id: string
-      email?: string
-      telegram_id?: number
-      name?: string
-      phone?: string
-      company?: string
-    }
+      sessionId: string;
+      name: string;
+      contactType: 'email' | 'telegram';
+      contactValue: string;
+    };
 
-    if (!session_id) {
+    if (!sessionId) {
       return NextResponse.json(
-        { error: 'session_id is required' },
+        { error: 'sessionId is required' },
         { status: 400 }
-      )
+      );
     }
 
-    if (!email && !telegram_id) {
+    if (!name || !contactType || !contactValue) {
       return NextResponse.json(
-        { error: 'Either email or telegram_id is required' },
+        { error: 'name, contactType, and contactValue are required' },
         { status: 400 }
-      )
+      );
     }
 
-    const lead = await createLead({
-      session_id,
-      email,
-      telegram_id,
+    // Create lead based on contact type
+    const leadData = {
+      session_id: sessionId,
       name,
-      phone,
-      company,
-    })
+      ...(contactType === 'email'
+        ? { email: contactValue }
+        : { telegram_id: parseInt(contactValue) || contactValue }
+      )
+    };
 
-    const sessionData = await getSessionWithResult(session_id)
+    const lead = await createLead(leadData);
+
+    // Get session data with result for webhook
+    const sessionData = await getSessionWithResult(sessionId);
 
     if (sessionData) {
       try {
@@ -54,8 +54,7 @@ export async function POST(request: NextRequest) {
             email: lead.email || undefined,
             telegram_id: lead.telegram_id || undefined,
             name: lead.name || undefined,
-            phone: lead.phone || undefined,
-            company: lead.company || undefined,
+            contact_type: contactType,
             platform: sessionData.session.source || 'web',
             created_at: lead.created_at,
           },
@@ -67,21 +66,21 @@ export async function POST(request: NextRequest) {
             })
           ),
           sessionData.result?.markdown
-        )
+        );
       } catch (n8nError) {
-        console.error('n8n webhook error:', n8nError)
+        console.error('n8n webhook error:', n8nError);
       }
     }
 
     return NextResponse.json({
       success: true,
       lead_id: lead.id,
-    })
+    });
   } catch (error) {
-    console.error('Lead submit error:', error)
+    console.error('Lead submit error:', error);
     return NextResponse.json(
       { error: 'Failed to submit lead' },
       { status: 500 }
-    )
+    );
   }
 }

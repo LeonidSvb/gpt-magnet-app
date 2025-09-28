@@ -1,8 +1,19 @@
 @import "tailwindcss";
 
+/* ===== LEAD MAGNET GENERATOR STYLES ===== */
+/* CSS Variables for consistent theming */
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Alfie Color Palette */
+  --alfie-green: #4FBDBA;
+  --alfie-light-green: #C1F0ED;
+  --alfie-dark-green: #C8F7C5;
+  --alfie-orange: #FF8C42;
+  --alfie-text: #2D4A47;
+  --alfie-text-light: #405A56;
+  --alfie-text-muted: #6B7B78;
 }
 
 @theme inline {
@@ -22,5 +33,322 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+}
+
+/* ===== ALFIE COMPONENT STYLES ===== */
+
+/* Main Widget Container */
+.alfie-embedded-chat {
+  width: 100%;
+  max-width: 500px;
+  background: var(--alfie-light-green);
+  border-radius: 20px;
+  padding: 30px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
+
+/* Progress Bar Styles */
+.alfie-progress-container {
+  width: 100%;
+  margin-bottom: 25px;
+  position: relative;
+}
+
+.alfie-progress-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 12px;
+  gap: 8px;
+}
+
+.alfie-progress-milestone {
+  font-size: 14px;
+  color: var(--alfie-text);
+  font-weight: 500;
+  animation: milestoneAppear 0.5s ease-in-out;
+}
+
+@keyframes milestoneAppear {
+  0% { opacity: 0; transform: translateY(-10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.alfie-celebration {
+  animation: celebrate 0.8s ease-in-out infinite alternate;
+  font-size: 16px;
+}
+
+@keyframes celebrate {
+  0% { transform: scale(1) rotate(0deg); }
+  100% { transform: scale(1.2) rotate(10deg); }
+}
+
+.alfie-progress-track {
+  width: 100%;
+  height: 12px;
+  background: var(--alfie-dark-green);
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.alfie-progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--alfie-green) 0%, #5BA16E 100%);
+  border-radius: 20px;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 0%;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(74, 139, 92, 0.3);
+}
+
+.alfie-progress-dots {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+
+.alfie-progress-dot {
+  position: absolute;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: white;
+  transform: translate(-50%, -50%);
+  opacity: 0.6;
+  transition: all 0.3s ease;
+}
+
+.alfie-progress-dot.active {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1.2);
+}
+
+/* Question Display Styles */
+.alfie-questions-section {
+  margin-top: 20px;
+}
+
+.alfie-question-display-simple {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 30px;
+}
+
+.alfie-question-avatar {
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.alfie-question-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.alfie-question-text-simple {
+  color: var(--alfie-text);
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 0;
+  text-align: left;
+}
+
+/* Answer Options Grid */
+.alfie-answer-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+/* Single Choice Buttons */
+.alfie-option-button {
+  background: var(--alfie-dark-green);
+  border: 2px solid var(--alfie-green);
+  border-radius: 18px;
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--alfie-text);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: inherit;
+}
+
+.alfie-option-button:hover {
+  background: #A7E8E4;
+  transform: scale(1.02);
+}
+
+.alfie-option-button.selected {
+  background: #9DE4DF;
+  color: #1B4B47;
+}
+
+/* Multi-select Option Buttons */
+.alfie-multi-option-button {
+  background: var(--alfie-dark-green);
+  border: 2px solid var(--alfie-green);
+  border-radius: 18px;
+  padding: 12px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--alfie-text);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: inherit;
+}
+
+.alfie-multi-option-button:hover {
+  background: #A7E8E4;
+  transform: scale(1.02);
+}
+
+.alfie-multi-option-button.selected {
+  background: var(--alfie-green);
+  color: white;
+}
+
+/* Text Input Styles */
+.alfie-custom-input {
+  margin-top: 15px;
+}
+
+.alfie-input {
+  width: 100%;
+  background: var(--alfie-dark-green);
+  border: none;
+  border-radius: 18px;
+  padding: 24px 18px;
+  font-size: 14px;
+  color: var(--alfie-text);
+  outline: none;
+  font-family: inherit;
+  box-sizing: border-box;
+  min-height: 60px;
+  transition: all 0.3s ease;
+}
+
+.alfie-input:focus {
+  background: #B8EDE8;
+  box-shadow: 0 0 0 2px var(--alfie-green);
+}
+
+.alfie-textarea {
+  resize: vertical;
+  line-height: 1.5;
+}
+
+.alfie-input::placeholder {
+  color: var(--alfie-text-light);
+  opacity: 0.7;
+}
+
+/* Other Input for Multi-select */
+.alfie-other-input-container {
+  grid-column: 1 / -1;
+  margin-top: 10px;
+}
+
+.alfie-other-input {
+  width: 100%;
+  background: var(--alfie-dark-green);
+  border: 2px solid var(--alfie-green);
+  border-radius: 18px;
+  padding: 12px 16px;
+  font-size: 13px;
+  color: var(--alfie-text);
+  outline: none;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.alfie-other-input:focus {
+  background: #B8EDE8;
+  border-color: var(--alfie-green);
+}
+
+/* Navigation Buttons */
+.alfie-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+  gap: 12px;
+}
+
+.alfie-nav-button {
+  background: var(--alfie-green);
+  color: white;
+  border: none;
+  border-radius: 18px;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.alfie-nav-button:hover {
+  background: #3A7A4C;
+  transform: scale(1.02);
+}
+
+.alfie-nav-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.alfie-nav-button.primary {
+  background: var(--alfie-green);
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 480px) {
+  .alfie-embedded-chat {
+    padding: 20px;
+    border-radius: 15px;
+  }
+
+  .alfie-question-display-simple {
+    gap: 8px;
+  }
+
+  .alfie-question-text-simple {
+    font-size: 18px;
+  }
+
+  .alfie-answer-options {
+    grid-template-columns: 1fr;
+  }
+
+  .alfie-navigation {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .alfie-nav-button {
+    width: 100%;
+  }
 }
