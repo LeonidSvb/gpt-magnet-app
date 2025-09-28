@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 
 interface LoadingSpinnerProps {
   message?: string;
-  category?: string;
+  businessType?: string;
 }
 
 const GENERATION_MESSAGES = [
@@ -16,34 +17,34 @@ const GENERATION_MESSAGES = [
   "Almost ready..."
 ];
 
-const CATEGORY_FACTS = {
-  'business': [
-    "80% of successful businesses have a clear value proposition",
+const BUSINESS_TYPE_FACTS = {
+  'soft-coach': [
+    "Personal coaches with clear systems earn 3x more",
+    "80% of clients prefer structured coaching approaches",
+    "Lead magnets increase coaching conversion rates by 40%"
+  ],
+  'hard-coach': [
+    "Business coaches with proven frameworks retain 90% more clients",
     "Companies with documented processes are 50% more efficient",
-    "Lead magnets increase conversion rates by up to 40%"
+    "ROI-focused coaching drives 3x better results"
   ],
-  'life-wellness': [
-    "Regular goal-setting increases success rate by 42%",
-    "Personalized content drives 80% higher engagement",
-    "Wellness programs improve productivity by 25%"
+  'agency': [
+    "Agencies with clear value propositions scale 5x faster",
+    "Service-based businesses with processes scale 3x faster",
+    "Client retention costs 5x less than acquisition"
   ],
-  'services': [
-    "Service businesses with clear processes scale 3x faster",
-    "Client retention costs 5x less than acquisition",
-    "Automated workflows save 20+ hours per week"
-  ],
-  'content': [
-    "Content creators with systems produce 300% more",
-    "Consistent posting increases audience by 67%",
+  'other-professional': [
+    "Professional services with clear systems grow 200% faster",
+    "Consistent content drives 67% more engagement",
     "Educational content drives 70% more engagement"
   ]
 };
 
-export function LoadingSpinner({ message, category }: LoadingSpinnerProps) {
+export function LoadingSpinner({ message, businessType }: LoadingSpinnerProps) {
   const [currentMessage, setCurrentMessage] = useState(0);
   const [currentFact, setCurrentFact] = useState(0);
 
-  const facts = category ? CATEGORY_FACTS[category as keyof typeof CATEGORY_FACTS] || [] : [];
+  const facts = businessType ? BUSINESS_TYPE_FACTS[businessType as keyof typeof BUSINESS_TYPE_FACTS] || [] : [];
 
   useEffect(() => {
     const messageInterval = setInterval(() => {
@@ -63,65 +64,67 @@ export function LoadingSpinner({ message, category }: LoadingSpinnerProps) {
   }, [facts.length]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[400px] bg-white rounded-lg shadow-lg p-8">
-      {/* Animated spinner */}
-      <div className="relative mb-8">
-        {/* Outer ring */}
-        <div className="w-20 h-20 border-4 border-blue-200 rounded-full animate-spin">
-          <div className="w-full h-full border-4 border-transparent border-t-blue-500 rounded-full animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }} />
-        </div>
-
-        {/* Inner ring */}
-        <div className="absolute inset-2 w-16 h-16 border-4 border-indigo-200 rounded-full animate-spin" style={{ animationDuration: '2s' }}>
-          <div className="w-full h-full border-4 border-transparent border-t-indigo-500 rounded-full animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1s' }} />
-        </div>
-
-        {/* Center dot */}
-        <div className="absolute inset-6 w-8 h-8 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full animate-pulse" />
-      </div>
-
-      {/* Main message */}
-      <h3 className="text-xl font-semibold text-gray-800 mb-4 text-center">
-        {message || "Creating Your Lead Magnet"}
-      </h3>
-
-      {/* Rotating status messages */}
-      <div className="h-8 mb-6">
-        <p
-          key={currentMessage}
-          className="text-gray-600 text-center animate-fade-in"
-        >
-          {GENERATION_MESSAGES[currentMessage]}
-        </p>
-      </div>
-
-      {/* Category-specific facts */}
-      {facts.length > 0 && (
-        <div className="max-w-md text-center">
-          <p className="text-sm text-gray-500 mb-2">Did you know?</p>
-          <div className="h-12">
-            <p
-              key={currentFact}
-              className="text-blue-600 font-medium animate-fade-in"
-            >
-              {facts[currentFact]}
-            </p>
+    <div className="alfie-embedded-chat">
+      <div className="alfie-question-display-simple">
+        <Image
+          src="/images/alfie-avatar.png"
+          alt="Coach Assistant"
+          width={48}
+          height={48}
+          className="alfie-question-avatar"
+          priority
+        />
+        <div className="alfie-question-content">
+          {/* Animated spinner */}
+          <div className="relative mb-4 flex justify-center">
+            {/* Outer ring */}
+            <div className="w-12 h-12 border-3 border-blue-200 rounded-full animate-spin">
+              <div className="w-full h-full border-3 border-transparent border-t-blue-500 rounded-full animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }} />
+            </div>
           </div>
-        </div>
-      )}
 
-      {/* Progress dots */}
-      <div className="flex space-x-2 mt-8">
-        {[0, 1, 2].map((dot) => (
-          <div
-            key={dot}
-            className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"
+          {/* Main message */}
+          <h2 className="alfie-question-text-simple text-center mb-2">
+            {message || "Creating Your Lead Magnet"}
+          </h2>
+
+          {/* Rotating status messages */}
+          <p
+            key={currentMessage}
+            className="text-center animate-fade-in"
             style={{
-              animationDelay: `${dot * 0.3}s`,
-              animationDuration: '1.5s'
+              fontSize: '14px',
+              color: 'var(--alfie-text-light)',
+              margin: '8px 0'
             }}
-          />
-        ))}
+          >
+            {GENERATION_MESSAGES[currentMessage]}
+          </p>
+
+          {/* Category-specific facts */}
+          {facts.length > 0 && (
+            <div className="text-center mt-4">
+              <p style={{
+                fontSize: '12px',
+                color: 'var(--alfie-text-muted)',
+                margin: '0 0 4px 0'
+              }}>
+                Did you know?
+              </p>
+              <p
+                key={currentFact}
+                className="animate-fade-in"
+                style={{
+                  fontSize: '14px',
+                  color: 'var(--alfie-primary)',
+                  fontWeight: '500'
+                }}
+              >
+                {facts[currentFact]}
+              </p>
+            </div>
+          )}
+        </div>
       </div>
 
       <style jsx>{`

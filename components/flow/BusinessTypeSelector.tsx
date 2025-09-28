@@ -2,6 +2,7 @@
 
 import { getActiveBusinessTypes } from '@/lib/questions';
 import { trackEvent } from '@/lib/analytics';
+import ProgressBar from './ProgressBar';
 
 interface BusinessTypeSelectorProps {
   onSelect: (businessType: string) => void;
@@ -21,12 +22,14 @@ export function BusinessTypeSelector({ onSelect, sessionId }: BusinessTypeSelect
 
   return (
     <div className="alfie-embedded-chat">
+      <ProgressBar current={1} total={5} />
+
       <div className="alfie-question-display-simple">
         <img
           src="/images/alfie-avatar.png"
           alt="Coach Assistant"
-          width={32}
-          height={32}
+          width={48}
+          height={48}
           className="alfie-question-avatar"
         />
         <div className="alfie-question-content">

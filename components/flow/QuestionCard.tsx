@@ -89,10 +89,10 @@ export default function QuestionCard({
 
   const getTextFieldHeight = (size: Question['fieldSize']) => {
     switch (size) {
-      case 'small': return '40px';
-      case 'medium': return '80px';
-      case 'large': return '120px';
-      default: return '40px';
+      case 'small': return '60px';
+      case 'medium': return '120px';
+      case 'large': return '180px';
+      default: return '60px';
     }
   };
 
@@ -201,8 +201,8 @@ export default function QuestionCard({
         <Image
           src="/images/alfie-avatar.png"
           alt="Coach Assistant"
-          width={32}
-          height={32}
+          width={48}
+          height={48}
           className="alfie-question-avatar"
           priority
         />

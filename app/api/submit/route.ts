@@ -4,17 +4,16 @@ import { createSession, updateSessionAnswers } from '@/lib/supabase-queries';
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { category, niche, answers, source } = body as {
-      category: string;
-      niche: string;
+    const { businessType, answers, source } = body as {
+      businessType: string;
       answers: Record<string, unknown>;
       source?: 'web' | 'telegram';
     };
 
     // Validate required fields
-    if (!category || !niche || !answers) {
+    if (!businessType || !answers) {
       return NextResponse.json(
-        { error: 'Missing required fields: category, niche, answers' },
+        { error: 'Missing required fields: businessType, answers' },
         { status: 400 }
       );
     }
@@ -31,11 +30,10 @@ export async function POST(request: NextRequest) {
       ip_address: ip,
     });
 
-    // Update session with answers, category, and niche
+    // Update session with answers and businessType
     await updateSessionAnswers(session.id, {
       ...answers,
-      category,
-      niche
+      businessType
     });
 
     return NextResponse.json({

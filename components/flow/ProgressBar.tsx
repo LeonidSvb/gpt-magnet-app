@@ -6,7 +6,7 @@ interface ProgressBarProps {
   className?: string;
 }
 
-export default function ProgressBar({ current, total, className = '' }: ProgressBarProps) {
+export function ProgressBar({ current, total, className = '' }: ProgressBarProps) {
   const progress = Math.min(Math.max((current / total) * 100, 0), 100);
 
   // Progress milestones with emojis - customized for lead magnet generation
@@ -52,3 +52,5 @@ export default function ProgressBar({ current, total, className = '' }: Progress
     </div>
   );
 }
+
+export default ProgressBar;

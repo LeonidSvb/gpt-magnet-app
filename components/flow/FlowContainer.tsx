@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect } from 'react';
-import { CategorySelector } from './CategorySelector';
-import { QuestionFlow } from './QuestionFlow';
+import { BusinessTypeSelector } from './BusinessTypeSelector';
+import { NewQuestionFlow } from './NewQuestionFlow';
 import { ResultDisplay } from './ResultDisplay';
 import { ProgressBar } from './ProgressBar';
 import { LoadingSpinner } from './LoadingSpinner';
@@ -10,21 +10,20 @@ import { LeadCapture } from './LeadCapture';
 import { useFlowState } from '@/lib/flow-state';
 import { trackEvent } from '@/lib/analytics';
 
-export type FlowStep = 'category' | 'questions' | 'generating' | 'lead-capture' | 'result';
+export type FlowStep = 'business-type' | 'questions' | 'generating' | 'lead-capture' | 'result';
 
 export function FlowContainer() {
   const {
     currentStep,
     setCurrentStep,
-    selectedCategory,
-    selectedNiche,
+    selectedBusinessType,
     answers,
     sessionId,
     result,
     resetFlow,
     setSource,
     setResult,
-    setCategory
+    setBusinessType
   } = useFlowState();
 
   useEffect(() => {
@@ -40,19 +39,17 @@ export function FlowContainer() {
     trackEvent('flow_started', { sessionId, source: source || 'web' });
   }, [sessionId, setSource]);
 
-  const handleCategorySelect = (category: string, niche: string) => {
-    trackEvent('category_selected', {
-      category,
-      niche,
+  const handleBusinessTypeSelect = (businessType: string) => {
+    trackEvent('business_type_selected', {
+      businessType,
       sessionId
     });
-    setCategory(category, niche);
+    setBusinessType(businessType);
   };
 
   const handleQuestionsComplete = async () => {
     trackEvent('questions_completed', {
-      category: selectedCategory,
-      niche: selectedNiche,
+      businessType: selectedBusinessType,
       answerCount: Object.keys(answers).length,
       sessionId
     });
@@ -60,33 +57,21 @@ export function FlowContainer() {
     setCurrentStep('generating');
 
     try {
-      // Submit answers to create session
-      const submitResponse = await fetch('/api/submit', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          category: selectedCategory,
-          niche: selectedNiche,
-          answers
-        })
-      });
+      // Mock successful submission for UI testing
+      const mockResult = `# Your Personalized Lead Magnet
 
-      if (!submitResponse.ok) throw new Error('Failed to submit');
+## The Ultimate Guide for ${selectedBusinessType} Professionals
 
-      const { sessionId: newSessionId } = await submitResponse.json();
+Based on your answers, here's your customized lead magnet content...
 
-      // Generate content
-      const generateResponse = await fetch('/api/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sessionId: newSessionId })
-      });
+### Key Benefits:
+- Solves your clients' main struggles
+- Positions you as an expert
+- Generates qualified leads
 
-      if (!generateResponse.ok) throw new Error('Failed to generate');
+*This is a demo result. Full integration coming soon!*`;
 
-      const { markdown } = await generateResponse.json();
-      setResult(markdown);
-
+      setResult(mockResult);
       setCurrentStep('lead-capture');
     } catch (error) {
       console.error('Flow error:', error);
@@ -131,7 +116,7 @@ export function FlowContainer() {
 
   const getStepNumber = () => {
     switch (currentStep) {
-      case 'category': return 1;
+      case 'business-type': return 1;
       case 'questions': return 2;
       case 'generating': return 3;
       case 'lead-capture': return 4;
@@ -143,29 +128,24 @@ export function FlowContainer() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
       <div className="max-w-2xl mx-auto px-4">
-        <ProgressBar
-          currentStep={getStepNumber()}
-          totalSteps={5}
-          labels={['Category', 'Questions', 'Generating', 'Contact', 'Result']}
-        />
-
         <div className="mt-8">
-          {currentStep === 'category' && (
-            <CategorySelector onSelect={handleCategorySelect} />
+          {currentStep === 'business-type' && (
+            <BusinessTypeSelector onSelect={handleBusinessTypeSelect} sessionId={sessionId} />
           )}
 
           {currentStep === 'questions' && (
-            <QuestionFlow
-              category={selectedCategory!}
-              niche={selectedNiche!}
+            <NewQuestionFlow
+              businessType={selectedBusinessType!}
               onComplete={handleQuestionsComplete}
+              onBack={() => setCurrentStep('business-type')}
+              sessionId={sessionId}
             />
           )}
 
           {currentStep === 'generating' && (
             <LoadingSpinner
               message="Creating your personalized lead magnet..."
-              category={selectedCategory!}
+              businessType={selectedBusinessType!}
             />
           )}
 
@@ -178,7 +158,7 @@ export function FlowContainer() {
           )}
         </div>
 
-        {currentStep !== 'category' && (
+        {currentStep !== 'business-type' && (
           <button
             onClick={resetFlow}
             className="mt-8 text-sm text-gray-500 hover:text-gray-700 underline"

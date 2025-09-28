@@ -3,12 +3,11 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { nanoid } from 'nanoid';
 
-export type FlowStep = 'category' | 'questions' | 'generating' | 'lead-capture' | 'result';
+export type FlowStep = 'business-type' | 'questions' | 'generating' | 'lead-capture' | 'result';
 
 export interface FlowState {
   currentStep: FlowStep;
-  selectedCategory: string | null;
-  selectedNiche: string | null;
+  selectedBusinessType: string | null;
   answers: Record<string, any>;
   sessionId: string;
   result: string | null;
@@ -17,7 +16,7 @@ export interface FlowState {
 
 interface FlowContextType extends FlowState {
   setCurrentStep: (step: FlowStep) => void;
-  setCategory: (category: string, niche: string) => void;
+  setBusinessType: (businessType: string) => void;
   updateAnswers: (questionId: string, answer: any) => void;
   setResult: (result: string) => void;
   resetFlow: () => void;
@@ -30,9 +29,8 @@ const STORAGE_KEY = 'gpt-magnet-flow-state';
 
 export function FlowProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<FlowState>({
-    currentStep: 'category',
-    selectedCategory: null,
-    selectedNiche: null,
+    currentStep: 'business-type',
+    selectedBusinessType: null,
     answers: {},
     sessionId: nanoid(),
     result: null,
@@ -62,11 +60,10 @@ export function FlowProvider({ children }: { children: ReactNode }) {
     setState(prev => ({ ...prev, currentStep: step }));
   };
 
-  const setCategory = (category: string, niche: string) => {
+  const setBusinessType = (businessType: string) => {
     setState(prev => ({
       ...prev,
-      selectedCategory: category,
-      selectedNiche: niche,
+      selectedBusinessType: businessType,
       currentStep: 'questions'
     }));
   };
@@ -92,9 +89,8 @@ export function FlowProvider({ children }: { children: ReactNode }) {
   const resetFlow = () => {
     localStorage.removeItem(STORAGE_KEY);
     setState({
-      currentStep: 'category',
-      selectedCategory: null,
-      selectedNiche: null,
+      currentStep: 'business-type',
+      selectedBusinessType: null,
       answers: {},
       sessionId: nanoid(),
       result: null,
@@ -105,7 +101,7 @@ export function FlowProvider({ children }: { children: ReactNode }) {
   const value: FlowContextType = {
     ...state,
     setCurrentStep,
-    setCategory,
+    setBusinessType,
     updateAnswers,
     setResult,
     resetFlow,

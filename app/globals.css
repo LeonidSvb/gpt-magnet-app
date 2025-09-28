@@ -6,14 +6,27 @@
   --background: #ffffff;
   --foreground: #171717;
 
-  /* Alfie Color Palette */
-  --alfie-green: #4FBDBA;
-  --alfie-light-green: #C1F0ED;
-  --alfie-dark-green: #C8F7C5;
-  --alfie-orange: #FF8C42;
-  --alfie-text: #2D4A47;
-  --alfie-text-light: #405A56;
-  --alfie-text-muted: #6B7B78;
+  /* === MAIN THEME COLORS - ЛЕГКО МЕНЯТЬ === */
+  --alfie-primary: #4FBDBA;           /* Основной цвет кнопок и акцентов */
+  --alfie-primary-hover: #3A7A4C;     /* Цвет при наведении на кнопки */
+  --alfie-background: #C1F0ED;        /* Фон виджета */
+  --alfie-card-background: #C8F7C5;   /* Фон карточек и полей ввода */
+  --alfie-accent: #FF8C42;            /* Акцентный оранжевый цвет */
+
+  /* === TEXT COLORS === */
+  --alfie-text: #2D4A47;              /* Основной текст */
+  --alfie-text-light: #405A56;        /* Вторичный текст */
+  --alfie-text-muted: #6B7B78;        /* Приглушенный текст */
+
+  /* === AVATAR SETTINGS === */
+  --alfie-avatar-size: 32px;          /* Размер аватарки (32px стандарт, 48px для загрузки) */
+  --alfie-avatar-large-size: 48px;    /* Большой размер аватарки */
+
+  /* Legacy поддержка - будет удалено */
+  --alfie-green: var(--alfie-primary);
+  --alfie-light-green: var(--alfie-background);
+  --alfie-dark-green: var(--alfie-card-background);
+  --alfie-orange: var(--alfie-accent);
 }
 
 @theme inline {
@@ -131,6 +144,22 @@ body {
 .alfie-progress-dot.active {
   opacity: 1;
   transform: translate(-50%, -50%) scale(1.2);
+}
+
+.alfie-progress-dot.current {
+  background: var(--alfie-primary);
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+}
+
+.alfie-progress-avatar {
+  border-radius: 50%;
+  width: 16px !important;
+  height: 16px !important;
 }
 
 /* Question Display Styles */

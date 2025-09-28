@@ -2,6 +2,41 @@
 
 Все изменения в проекте GPT Lead Magnet будут документированы в этом файле.
 
+## [v0.2.1] - 2025-09-28 (UI/UX Improvements & Bug Fixes) ✅ READY FOR TESTING
+
+### 🎨 UI/UX IMPROVEMENTS
+- **Fixed ProgressBar Duplication**: Removed external ProgressBar, kept only inside widget
+- **Enlarged Avatars**: Increased avatar size from 32px to 48px for better visibility
+- **Improved Text Fields**: Increased height (small: 60px, medium: 120px, large: 180px)
+- **Unified LoadingSpinner**: Integrated with Alfie design system, reduced spacing
+- **Fixed Component Architecture**: Updated from category/niche to businessType structure
+
+### 🔧 TECHNICAL FIXES
+- **API Integration**: Updated submit route to use businessType instead of category/niche
+- **Component Imports**: Fixed all broken imports after refactoring (CategorySelector → BusinessTypeSelector)
+- **Flow State**: Updated flow-state.tsx to support new businessType architecture
+- **Mock API**: Added temporary mock responses for UI testing
+
+### 🎯 CSS CUSTOMIZATION SYSTEM
+- **Organized Variables**: Created easy-to-modify CSS variables in globals.css:
+  - `--alfie-primary`: Main button and accent color
+  - `--alfie-background`: Widget background
+  - `--alfie-card-background`: Card and input field background
+  - `--alfie-avatar-size`: Avatar sizing controls
+- **Legacy Support**: Maintained backward compatibility with existing variable names
+
+### ⚡ PERFORMANCE & DEVELOPMENT
+- **Fast TypeScript Checking**: Use `npx tsc --noEmit` instead of full build for quick error checking
+- **Port Management**: Follow frontend.md rules - random ports 3000-6000, kill unused processes
+- **Error Handling**: Added graceful error handling with user-friendly messages
+
+### 🚀 TESTING STATUS
+- ✅ UI Components: All working correctly
+- ✅ Progress Flow: Business type → Questions → Loading → Lead capture → Results
+- ✅ Responsive Design: Mobile and desktop compatible
+- ⏳ API Integration: Mock responses active, real integration pending
+- ⏳ Database: Supabase connection needs configuration
+
 ## [v0.2.0] - 2025-09-28 (MVP Question System Implementation) 🚧 REQUIRES TESTING
 
 ### 🎯 NEW QUESTION ARCHITECTURE
