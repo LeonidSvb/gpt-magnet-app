@@ -1,32 +1,33 @@
 @import "tailwindcss";
 
-/* ===== LEAD MAGNET GENERATOR STYLES ===== */
-/* CSS Variables for consistent theming */
+/* ===== LEAD MAGNET GENERATOR - WHITE LABEL STYLES ===== */
+/* Все цвета управляются из lib/theme.ts */
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
 
-  /* === MAIN THEME COLORS - ЛЕГКО МЕНЯТЬ === */
-  --alfie-primary: #4FBDBA;           /* Основной цвет кнопок и акцентов */
-  --alfie-primary-hover: #3A7A4C;     /* Цвет при наведении на кнопки */
-  --alfie-background: #C1F0ED;        /* Фон виджета */
-  --alfie-card-background: #C8F7C5;   /* Фон карточек и полей ввода */
-  --alfie-accent: #FF8C42;            /* Акцентный оранжевый цвет */
+  /* === THEME VARIABLES - Устанавливаются из lib/theme.ts === */
+  --widget-primary: #4A90E2;
+  --widget-primary-hover: #357ABD;
+  --widget-background: #F8FAFB;
+  --widget-card-background: #FFFFFF;
+  --widget-accent: #5DA3F5;
+  --widget-text: #2C3E50;
+  --widget-text-light: #5A6C7D;
+  --widget-text-muted: #95A5A6;
+  --widget-border: #E0E7EE;
 
-  /* === TEXT COLORS === */
-  --alfie-text: #2D4A47;              /* Основной текст */
-  --alfie-text-light: #405A56;        /* Вторичный текст */
-  --alfie-text-muted: #6B7B78;        /* Приглушенный текст */
+  --widget-avatar-size: 56px;
+  --widget-avatar-large-size: 64px;
 
-  /* === AVATAR SETTINGS === */
-  --alfie-avatar-size: 32px;          /* Размер аватарки (32px стандарт, 48px для загрузки) */
-  --alfie-avatar-large-size: 48px;    /* Большой размер аватарки */
+  --widget-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --widget-question-size: 20px;
+  --widget-hint-size: 14px;
 
-  /* Legacy поддержка - будет удалено */
-  --alfie-green: var(--alfie-primary);
-  --alfie-light-green: var(--alfie-background);
-  --alfie-dark-green: var(--alfie-card-background);
-  --alfie-orange: var(--alfie-accent);
+  --widget-container-padding: 30px;
+  --widget-border-radius: 18px;
+  --widget-button-padding: 12px 24px;
 }
 
 @theme inline {
@@ -46,31 +47,30 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family: var(--widget-font-family);
 }
 
-/* ===== ALFIE COMPONENT STYLES ===== */
+/* ===== WIDGET COMPONENT STYLES ===== */
 
-/* Main Widget Container */
-.alfie-embedded-chat {
+.widget-container {
   width: 100%;
   max-width: 500px;
-  background: var(--alfie-light-green);
+  background: var(--widget-background);
   border-radius: 20px;
-  padding: 30px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  padding: var(--widget-container-padding);
+  font-family: var(--widget-font-family);
   box-sizing: border-box;
   margin: 0 auto;
 }
 
-/* Progress Bar Styles */
-.alfie-progress-container {
+/* Progress Bar */
+.widget-progress-container {
   width: 100%;
   margin-bottom: 25px;
   position: relative;
 }
 
-.alfie-progress-header {
+.widget-progress-header {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -78,9 +78,9 @@ body {
   gap: 8px;
 }
 
-.alfie-progress-milestone {
+.widget-progress-milestone {
   font-size: 14px;
-  color: var(--alfie-text);
+  color: var(--widget-text);
   font-weight: 500;
   animation: milestoneAppear 0.5s ease-in-out;
 }
@@ -90,7 +90,7 @@ body {
   100% { opacity: 1; transform: translateY(0); }
 }
 
-.alfie-celebration {
+.widget-celebration {
   animation: celebrate 0.8s ease-in-out infinite alternate;
   font-size: 16px;
 }
@@ -100,27 +100,27 @@ body {
   100% { transform: scale(1.2) rotate(10deg); }
 }
 
-.alfie-progress-track {
+.widget-progress-track {
   width: 100%;
   height: 12px;
-  background: var(--alfie-dark-green);
+  background: rgba(0,0,0,0.05);
   border-radius: 20px;
   overflow: hidden;
   position: relative;
   box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.alfie-progress-bar {
+.widget-progress-bar {
   height: 100%;
-  background: linear-gradient(90deg, var(--alfie-green) 0%, #5BA16E 100%);
+  background: linear-gradient(90deg, var(--widget-primary) 0%, var(--widget-accent) 100%);
   border-radius: 20px;
   transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   width: 0%;
   position: relative;
-  box-shadow: 0 2px 8px rgba(74, 139, 92, 0.3);
+  box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
 }
 
-.alfie-progress-dots {
+.widget-progress-dots {
   position: absolute;
   top: 0;
   left: 0;
@@ -129,7 +129,7 @@ body {
   pointer-events: none;
 }
 
-.alfie-progress-dot {
+.widget-progress-dot {
   position: absolute;
   top: 50%;
   width: 8px;
@@ -141,13 +141,13 @@ body {
   transition: all 0.3s ease;
 }
 
-.alfie-progress-dot.active {
+.widget-progress-dot.active {
   opacity: 1;
   transform: translate(-50%, -50%) scale(1.2);
 }
 
-.alfie-progress-dot.current {
-  background: var(--alfie-primary);
+.widget-progress-dot.current {
+  background: var(--widget-primary);
   width: 20px;
   height: 20px;
   display: flex;
@@ -156,37 +156,39 @@ body {
   z-index: 10;
 }
 
-.alfie-progress-avatar {
+.widget-progress-avatar {
   border-radius: 50%;
   width: 16px !important;
   height: 16px !important;
 }
 
-/* Question Display Styles */
-.alfie-questions-section {
+/* Question Display */
+.widget-questions-section {
   margin-top: 20px;
 }
 
-.alfie-question-display-simple {
+.widget-question-display {
   display: flex;
   align-items: flex-start;
   gap: 12px;
   margin-bottom: 30px;
 }
 
-.alfie-question-avatar {
+.widget-question-avatar {
   border-radius: 50%;
   flex-shrink: 0;
+  width: var(--widget-avatar-size);
+  height: var(--widget-avatar-size);
 }
 
-.alfie-question-content {
+.widget-question-content {
   flex: 1;
   min-width: 0;
 }
 
-.alfie-question-text-simple {
-  color: var(--alfie-text);
-  font-size: 20px;
+.widget-question-text {
+  color: var(--widget-text);
+  font-size: var(--widget-question-size);
   font-weight: 600;
   line-height: 1.4;
   margin: 0;
@@ -194,22 +196,22 @@ body {
 }
 
 /* Answer Options Grid */
-.alfie-answer-options {
+.widget-answer-options {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
   margin-bottom: 15px;
 }
 
-/* Single Choice Buttons */
-.alfie-option-button {
-  background: var(--alfie-dark-green);
-  border: 2px solid var(--alfie-green);
-  border-radius: 18px;
+/* Choice Buttons */
+.widget-option-button {
+  background: var(--widget-card-background);
+  border: 2px solid var(--widget-border);
+  border-radius: var(--widget-border-radius);
   padding: 12px 16px;
   font-size: 13px;
   font-weight: 500;
-  color: var(--alfie-text);
+  color: var(--widget-text);
   cursor: pointer;
   transition: all 0.3s ease;
   text-align: left;
@@ -219,25 +221,27 @@ body {
   font-family: inherit;
 }
 
-.alfie-option-button:hover {
-  background: #A7E8E4;
+.widget-option-button:hover {
+  background: #E3F2FD;
+  border-color: var(--widget-primary);
   transform: scale(1.02);
 }
 
-.alfie-option-button.selected {
-  background: #9DE4DF;
-  color: #1B4B47;
+.widget-option-button.selected {
+  background: #BBDEFB;
+  border-color: var(--widget-primary);
+  color: var(--widget-text);
 }
 
-/* Multi-select Option Buttons */
-.alfie-multi-option-button {
-  background: var(--alfie-dark-green);
-  border: 2px solid var(--alfie-green);
-  border-radius: 18px;
+/* Multi-select Buttons */
+.widget-multi-option-button {
+  background: var(--widget-card-background);
+  border: 2px solid var(--widget-border);
+  border-radius: var(--widget-border-radius);
   padding: 12px 16px;
   font-size: 13px;
   font-weight: 500;
-  color: var(--alfie-text);
+  color: var(--widget-text);
   cursor: pointer;
   transition: all 0.3s ease;
   text-align: left;
@@ -247,29 +251,31 @@ body {
   font-family: inherit;
 }
 
-.alfie-multi-option-button:hover {
-  background: #A7E8E4;
+.widget-multi-option-button:hover {
+  background: #E3F2FD;
+  border-color: var(--widget-primary);
   transform: scale(1.02);
 }
 
-.alfie-multi-option-button.selected {
-  background: var(--alfie-green);
+.widget-multi-option-button.selected {
+  background: var(--widget-primary);
+  border-color: var(--widget-primary);
   color: white;
 }
 
-/* Text Input Styles */
-.alfie-custom-input {
+/* Text Input */
+.widget-custom-input {
   margin-top: 15px;
 }
 
-.alfie-input {
+.widget-input {
   width: 100%;
-  background: var(--alfie-dark-green);
-  border: none;
-  border-radius: 18px;
+  background: var(--widget-card-background);
+  border: 2px solid var(--widget-border);
+  border-radius: var(--widget-border-radius);
   padding: 24px 18px;
   font-size: 14px;
-  color: var(--alfie-text);
+  color: var(--widget-text);
   outline: none;
   font-family: inherit;
   box-sizing: border-box;
@@ -277,47 +283,47 @@ body {
   transition: all 0.3s ease;
 }
 
-.alfie-input:focus {
-  background: #B8EDE8;
-  box-shadow: 0 0 0 2px var(--alfie-green);
+.widget-input:focus {
+  background: #F0F7FF;
+  box-shadow: 0 0 0 2px var(--widget-primary);
 }
 
-.alfie-textarea {
+.widget-textarea {
   resize: vertical;
   line-height: 1.5;
 }
 
-.alfie-input::placeholder {
-  color: var(--alfie-text-light);
+.widget-input::placeholder {
+  color: var(--widget-text-light);
   opacity: 0.7;
 }
 
-/* Other Input for Multi-select */
-.alfie-other-input-container {
+/* Other Input */
+.widget-other-input-container {
   grid-column: 1 / -1;
   margin-top: 10px;
 }
 
-.alfie-other-input {
+.widget-other-input {
   width: 100%;
-  background: var(--alfie-dark-green);
-  border: 2px solid var(--alfie-green);
-  border-radius: 18px;
+  background: var(--widget-card-background);
+  border: 2px solid var(--widget-border);
+  border-radius: var(--widget-border-radius);
   padding: 12px 16px;
   font-size: 13px;
-  color: var(--alfie-text);
+  color: var(--widget-text);
   outline: none;
   font-family: inherit;
   box-sizing: border-box;
 }
 
-.alfie-other-input:focus {
-  background: #B8EDE8;
-  border-color: var(--alfie-green);
+.widget-other-input:focus {
+  background: #F0F7FF;
+  border-color: var(--widget-primary);
 }
 
 /* Navigation Buttons */
-.alfie-navigation {
+.widget-navigation {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -325,12 +331,12 @@ body {
   gap: 12px;
 }
 
-.alfie-nav-button {
-  background: var(--alfie-green);
+.widget-nav-button {
+  background: var(--widget-primary);
   color: white;
   border: none;
-  border-radius: 18px;
-  padding: 12px 24px;
+  border-radius: var(--widget-border-radius);
+  padding: var(--widget-button-padding);
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -338,46 +344,74 @@ body {
   font-family: inherit;
 }
 
-.alfie-nav-button:hover {
-  background: #3A7A4C;
+.widget-nav-button:hover {
+  background: var(--widget-primary-hover);
   transform: scale(1.02);
 }
 
-.alfie-nav-button:disabled {
+.widget-nav-button:disabled {
   background: #ccc;
   cursor: not-allowed;
   transform: none;
 }
 
-.alfie-nav-button.primary {
-  background: var(--alfie-green);
+.widget-nav-button.primary {
+  background: var(--widget-primary);
 }
 
 /* Mobile Responsiveness */
 @media (max-width: 480px) {
-  .alfie-embedded-chat {
+  .widget-container {
     padding: 20px;
     border-radius: 15px;
   }
 
-  .alfie-question-display-simple {
+  .widget-question-display {
     gap: 8px;
   }
 
-  .alfie-question-text-simple {
+  .widget-question-text {
     font-size: 18px;
   }
 
-  .alfie-answer-options {
+  .widget-answer-options {
     grid-template-columns: 1fr;
   }
 
-  .alfie-navigation {
+  .widget-navigation {
     flex-direction: column;
     gap: 8px;
   }
 
-  .alfie-nav-button {
+  .widget-nav-button {
     width: 100%;
   }
 }
+
+/* ===== LEGACY SUPPORT - DEPRECATED ===== */
+/* Старые alfie- классы для обратной совместимости */
+.alfie-embedded-chat { @apply widget-container; }
+.alfie-progress-container { @apply widget-progress-container; }
+.alfie-progress-header { @apply widget-progress-header; }
+.alfie-progress-milestone { @apply widget-progress-milestone; }
+.alfie-celebration { @apply widget-celebration; }
+.alfie-progress-track { @apply widget-progress-track; }
+.alfie-progress-bar { @apply widget-progress-bar; }
+.alfie-progress-dots { @apply widget-progress-dots; }
+.alfie-progress-dot { @apply widget-progress-dot; }
+.alfie-progress-avatar { @apply widget-progress-avatar; }
+.alfie-questions-section { @apply widget-questions-section; }
+.alfie-question-display-simple { @apply widget-question-display; }
+.alfie-question-avatar { @apply widget-question-avatar; }
+.alfie-question-content { @apply widget-question-content; }
+.alfie-question-text-simple { @apply widget-question-text; }
+.alfie-answer-options { @apply widget-answer-options; }
+.alfie-option-button { @apply widget-option-button; }
+.alfie-multi-option-button { @apply widget-multi-option-button; }
+.alfie-custom-input { @apply widget-custom-input; }
+.alfie-input { @apply widget-input; }
+.alfie-textarea { @apply widget-textarea; }
+.alfie-other-input-container { @apply widget-other-input-container; }
+.alfie-other-input { @apply widget-other-input; }
+.alfie-navigation { @apply widget-navigation; }
+.alfie-nav-button { @apply widget-nav-button; }
