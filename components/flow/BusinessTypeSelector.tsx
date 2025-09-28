@@ -2,6 +2,7 @@
 
 import { getActiveBusinessTypes } from '@/lib/questions';
 import { trackEvent } from '@/lib/analytics';
+import { getAvatarConfig } from '@/lib/theme';
 import ProgressBar from './ProgressBar';
 
 interface BusinessTypeSelectorProps {
@@ -11,6 +12,7 @@ interface BusinessTypeSelectorProps {
 
 export function BusinessTypeSelector({ onSelect, sessionId }: BusinessTypeSelectorProps) {
   const businessTypes = getActiveBusinessTypes();
+  const avatar = getAvatarConfig();
 
   const handleSelect = (businessType: string) => {
     trackEvent('business_type_selected', {
@@ -21,24 +23,24 @@ export function BusinessTypeSelector({ onSelect, sessionId }: BusinessTypeSelect
   };
 
   return (
-    <div className="alfie-embedded-chat">
+    <div className="widget-container">
       <ProgressBar current={1} total={5} />
 
-      <div className="alfie-question-display-simple">
+      <div className="widget-question-display">
         <img
-          src="/images/alfie-avatar.png"
-          alt="Coach Assistant"
-          width={48}
-          height={48}
-          className="alfie-question-avatar"
+          src={avatar.src}
+          alt={avatar.alt}
+          width={avatar.size}
+          height={avatar.size}
+          className="widget-question-avatar"
         />
-        <div className="alfie-question-content">
-          <h2 className="alfie-question-text-simple">
+        <div className="widget-question-content">
+          <h2 className="widget-question-text">
             What type of professional are you?
           </h2>
           <p style={{
             fontSize: '14px',
-            color: 'var(--alfie-text-light)',
+            color: 'var(--widget-text-light)',
             margin: '8px 0 0 0',
             fontStyle: 'italic'
           }}>
@@ -47,12 +49,12 @@ export function BusinessTypeSelector({ onSelect, sessionId }: BusinessTypeSelect
         </div>
       </div>
 
-      <div className="alfie-answer-options">
+      <div className="widget-answer-options">
         {businessTypes.map((type) => (
           <button
             key={type.id}
             onClick={() => handleSelect(type.id)}
-            className="alfie-option-button"
+            className="widget-option-button"
             style={{ gridColumn: '1 / -1' }}
           >
             <div>

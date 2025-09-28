@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Question } from '@/lib/questions';
+import { getAvatarConfig } from '@/lib/theme';
 
 export interface QuestionCardProps {
   question: Question;
@@ -23,6 +24,7 @@ export default function QuestionCard({
   isLast,
   isValid
 }: QuestionCardProps) {
+  const avatar = getAvatarConfig();
   const [otherText, setOtherText] = useState('');
   const [userJustClicked, setUserJustClicked] = useState(false);
 
@@ -106,7 +108,7 @@ export default function QuestionCard({
                 key={option}
                 type="button"
                 onClick={() => handleSingleChoice(option)}
-                className={`alfie-option-button ${value === option ? 'selected' : ''}`}
+                className={`widget-option-button ${value === option ? 'selected' : ''}`}
               >
                 {option}
               </button>
@@ -122,7 +124,7 @@ export default function QuestionCard({
                 key={option}
                 type="button"
                 onClick={() => handleMultipleChoice(option)}
-                className={`alfie-multi-option-button ${Array.isArray(value) && value.includes(option) ? 'selected' : ''}`}
+                className={`widget-multi-option-button ${Array.isArray(value) && value.includes(option) ? 'selected' : ''}`}
               >
                 {option}
               </button>
@@ -138,21 +140,21 @@ export default function QuestionCard({
                 key={option}
                 type="button"
                 onClick={() => handleMultiWithOther(option)}
-                className={`alfie-multi-option-button ${Array.isArray(value) && value.includes(option) ? 'selected' : ''}`}
+                className={`widget-multi-option-button ${Array.isArray(value) && value.includes(option) ? 'selected' : ''}`}
               >
                 {option}
               </button>
             ))}
 
             {question.hasOtherOption && (
-              <div className="alfie-other-input-container">
+              <div className="widget-other-input-container">
                 <input
                   key={`${question.id}-other`}
                   type="text"
                   value={otherText}
                   onChange={(e) => handleOtherTextChange(e.target.value)}
                   placeholder="Type your answer here..."
-                  className="alfie-other-input"
+                  className="widget-other-input"
                 />
               </div>
             )}
@@ -162,14 +164,14 @@ export default function QuestionCard({
       case 'text':
         const isTextarea = question.fieldSize === 'medium' || question.fieldSize === 'large';
         return (
-          <div className="alfie-custom-input" style={{gridColumn: '1 / -1'}}>
+          <div className="widget-custom-input" style={{gridColumn: '1 / -1'}}>
             {isTextarea ? (
               <textarea
                 key={question.id}
                 value={value || ''}
                 onChange={(e) => handleTextChange(e.target.value)}
                 placeholder={question.placeholder}
-                className="alfie-input alfie-textarea"
+                className="widget-input widget-textarea"
                 style={{
                   height: getTextFieldHeight(question.fieldSize),
                   resize: 'vertical',
@@ -183,7 +185,7 @@ export default function QuestionCard({
                 value={value || ''}
                 onChange={(e) => handleTextChange(e.target.value)}
                 placeholder={question.placeholder}
-                className="alfie-input"
+                className="widget-input"
               />
             )}
           </div>
@@ -195,19 +197,19 @@ export default function QuestionCard({
   };
 
   return (
-    <div className="alfie-questions-section">
+    <div className="widget-questions-section">
       {/* Question Display */}
-      <div className="alfie-question-display-simple">
+      <div className="widget-question-display">
         <Image
-          src="/images/alfie-avatar.png"
-          alt="Coach Assistant"
-          width={48}
-          height={48}
-          className="alfie-question-avatar"
+          src={avatar.src}
+          alt={avatar.alt}
+          width={avatar.size}
+          height={avatar.size}
+          className="widget-question-avatar"
           priority
         />
-        <div className="alfie-question-content">
-          <h2 className="alfie-question-text-simple">
+        <div className="widget-question-content">
+          <h2 className="widget-question-text">
             {question.text}
           </h2>
 
@@ -215,7 +217,7 @@ export default function QuestionCard({
           {question.hint && (
             <p style={{
               fontSize: '14px',
-              color: 'var(--alfie-text-light)',
+              color: 'var(--widget-text-light)',
               margin: '8px 0 0 0',
               fontStyle: 'italic'
             }}>
@@ -227,7 +229,7 @@ export default function QuestionCard({
           {(question.type === 'multiple-choice' || question.type === 'multi-with-other') && !question.hint && (
             <p style={{
               fontSize: '14px',
-              color: 'var(--alfie-text-light)',
+              color: 'var(--widget-text-light)',
               margin: '8px 0 0 0',
               fontStyle: 'italic'
             }}>
@@ -239,7 +241,7 @@ export default function QuestionCard({
           {question.helpText && (
             <p style={{
               fontSize: '12px',
-              color: 'var(--alfie-text-muted)',
+              color: 'var(--widget-text-muted)',
               margin: '4px 0 0 0',
               opacity: 0.7
             }}>
@@ -250,23 +252,23 @@ export default function QuestionCard({
       </div>
 
       {/* Answer Options */}
-      <div className="alfie-answer-options">
+      <div className="widget-answer-options">
         {renderInput()}
       </div>
 
       {/* Navigation - for all types except single-choice */}
       {(question.type === 'multiple-choice' || question.type === 'multi-with-other' || question.type === 'text') && (
-        <div className="alfie-navigation">
+        <div className="widget-navigation">
           <button
             onClick={handlePrev}
-            className="alfie-nav-button"
+            className="widget-nav-button"
           >
             {isFirst ? '← Back to Start' : '← Back'}
           </button>
           <button
             onClick={onNext}
             disabled={!isValid}
-            className={`alfie-nav-button ${isValid ? 'primary' : ''}`}
+            className={`widget-nav-button ${isValid ? 'primary' : ''}`}
           >
             {isLast ? '✓ Generate My Lead Magnet' : 'Next →'}
           </button>
@@ -275,10 +277,10 @@ export default function QuestionCard({
 
       {/* Navigation for single-choice - only back button */}
       {question.type === 'single-choice' && (
-        <div className="alfie-navigation" style={{ justifyContent: 'flex-start' }}>
+        <div className="widget-navigation" style={{ justifyContent: 'flex-start' }}>
           <button
             onClick={handlePrev}
-            className="alfie-nav-button"
+            className="widget-nav-button"
           >
             {isFirst ? '← Back to Start' : '← Back'}
           </button>

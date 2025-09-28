@@ -64,17 +64,17 @@ export function LoadingSpinner({ message, businessType }: LoadingSpinnerProps) {
   }, [facts.length]);
 
   return (
-    <div className="alfie-embedded-chat">
-      <div className="alfie-question-display-simple">
+    <div className="widget-container">
+      <div className="widget-question-display">
         <Image
           src="/images/alfie-avatar.png"
           alt="Coach Assistant"
           width={48}
           height={48}
-          className="alfie-question-avatar"
+          className="widget-question-avatar"
           priority
         />
-        <div className="alfie-question-content">
+        <div className="widget-question-content">
           {/* Animated spinner */}
           <div className="relative mb-4 flex justify-center">
             {/* Outer ring */}
@@ -84,7 +84,7 @@ export function LoadingSpinner({ message, businessType }: LoadingSpinnerProps) {
           </div>
 
           {/* Main message */}
-          <h2 className="alfie-question-text-simple text-center mb-2">
+          <h2 className="widget-question-text text-center mb-2">
             {message || "Creating Your Lead Magnet"}
           </h2>
 
@@ -94,7 +94,7 @@ export function LoadingSpinner({ message, businessType }: LoadingSpinnerProps) {
             className="text-center animate-fade-in"
             style={{
               fontSize: '14px',
-              color: 'var(--alfie-text-light)',
+              color: 'var(--widget-text-light)',
               margin: '8px 0'
             }}
           >
@@ -106,7 +106,7 @@ export function LoadingSpinner({ message, businessType }: LoadingSpinnerProps) {
             <div className="text-center mt-4">
               <p style={{
                 fontSize: '12px',
-                color: 'var(--alfie-text-muted)',
+                color: 'var(--widget-text-muted)',
                 margin: '0 0 4px 0'
               }}>
                 Did you know?

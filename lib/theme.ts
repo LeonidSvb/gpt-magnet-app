@@ -52,8 +52,8 @@ export const DEFAULT_THEME: ThemeConfig = {
     border: '#E0E7EE'
   },
   avatar: {
-    src: '/images/assistant-avatar.png',  // Нейтральное имя
-    alt: 'Assistant',
+    src: '/images/leo.png',  // Leo's avatar
+    alt: 'Leo',
     size: 56,
     largeSize: 64
   },

@@ -23,26 +23,26 @@ export function ProgressBar({ current, total, className = '' }: ProgressBarProps
   const showCelebration = progress === 100;
 
   return (
-    <div className={`alfie-progress-container ${className}`}>
-      <div className="alfie-progress-header">
-        <span className="alfie-progress-milestone">
+    <div className={`widget-progress-container ${className}`}>
+      <div className="widget-progress-header">
+        <span className="widget-progress-milestone">
           {currentMilestone.emoji} {currentMilestone.label}
         </span>
-        {showCelebration && <span className="alfie-celebration">🎉✨</span>}
+        {showCelebration && <span className="widget-celebration">🎉✨</span>}
       </div>
-      <div className="alfie-progress-track">
+      <div className="widget-progress-track">
         <div
-          className="alfie-progress-bar"
+          className="widget-progress-bar"
           style={{ width: `${progress}%` }}
         />
-        <div className="alfie-progress-dots">
+        <div className="widget-progress-dots">
           {Array.from({ length: 5 }, (_, i) => {
             const dotProgress = (i + 1) * 20;
             const isActive = progress >= dotProgress;
             return (
               <div
                 key={i}
-                className={`alfie-progress-dot ${isActive ? 'active' : ''}`}
+                className={`widget-progress-dot ${isActive ? 'active' : ''}`}
                 style={{ left: `${dotProgress}%` }}
               />
             );

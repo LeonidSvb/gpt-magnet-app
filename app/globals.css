@@ -388,30 +388,3 @@ body {
   }
 }
 
-/* ===== LEGACY SUPPORT - DEPRECATED ===== */
-/* Старые alfie- классы для обратной совместимости */
-.alfie-embedded-chat { @apply widget-container; }
-.alfie-progress-container { @apply widget-progress-container; }
-.alfie-progress-header { @apply widget-progress-header; }
-.alfie-progress-milestone { @apply widget-progress-milestone; }
-.alfie-celebration { @apply widget-celebration; }
-.alfie-progress-track { @apply widget-progress-track; }
-.alfie-progress-bar { @apply widget-progress-bar; }
-.alfie-progress-dots { @apply widget-progress-dots; }
-.alfie-progress-dot { @apply widget-progress-dot; }
-.alfie-progress-avatar { @apply widget-progress-avatar; }
-.alfie-questions-section { @apply widget-questions-section; }
-.alfie-question-display-simple { @apply widget-question-display; }
-.alfie-question-avatar { @apply widget-question-avatar; }
-.alfie-question-content { @apply widget-question-content; }
-.alfie-question-text-simple { @apply widget-question-text; }
-.alfie-answer-options { @apply widget-answer-options; }
-.alfie-option-button { @apply widget-option-button; }
-.alfie-multi-option-button { @apply widget-multi-option-button; }
-.alfie-custom-input { @apply widget-custom-input; }
-.alfie-input { @apply widget-input; }
-.alfie-textarea { @apply widget-textarea; }
-.alfie-other-input-container { @apply widget-other-input-container; }
-.alfie-other-input { @apply widget-other-input; }
-.alfie-navigation { @apply widget-navigation; }
-.alfie-nav-button { @apply widget-nav-button; }

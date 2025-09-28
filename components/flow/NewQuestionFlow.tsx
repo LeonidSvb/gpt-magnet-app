@@ -108,7 +108,7 @@ export function NewQuestionFlow({
   }
 
   return (
-    <div className="alfie-embedded-chat">
+    <div className="widget-container">
       <ProgressBar
         current={currentQuestionIndex + 1}
         total={totalQuestions}
