@@ -11,13 +11,13 @@ export function initPostHog() {
   }
 }
 
-export function trackEvent(event: string, properties?: Record<string, any>) {
+export function trackEvent(event: string, properties?: Record<string, unknown>) {
   if (typeof window !== 'undefined') {
     posthog.capture(event, properties)
   }
 }
 
-export function identifyUser(userId: string, traits?: Record<string, any>) {
+export function identifyUser(userId: string, traits?: Record<string, unknown>) {
   if (typeof window !== 'undefined') {
     posthog.identify(userId, traits)
   }

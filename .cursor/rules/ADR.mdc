@@ -55,13 +55,10 @@ END ADR_AGENT_PROTOCOL
 
 | ID   | Title                                                        | Date       | Status   | Supersedes | Superseded by |
 | ---- | ------------------------------------------------------------ | ---------- | -------- | ---------- | ------------- |
-| 0007 | [GoHighLevel Field Mapping Critical Fix](#adr-0007)         | 2025-09-07 | Accepted | —          | —             |
-| 0006 | [Email Gate Redesign to Inline Form](#adr-0006)             | 2025-09-07 | Accepted | —          | —             |
-| 0005 | [GoHighLevel CRM Integration with Structured Field Mapping](#adr-0005) | 2025-09-06 | Accepted | —          | —             |
-| 0004 | [Airtable Expert Directory with Tag-Based Matching](#adr-0004) | 2025-09-06 | Accepted | —          | —             |
-| 0003 | [OpenAI Trip Guide Generation with Alfie Personality](#adr-0003) | 2025-09-06 | Accepted | —          | —             |
-| 0002 | [Next.js Widget Architecture for Webflow Embedding](#adr-0002) | 2025-09-06 | Accepted | —          | —             |
-| 0001 | [Embeddable TripGuide Widget MVP Architecture](#adr-0001)    | 2025-09-06 | Accepted | —          | —             |
+| 0004 | [PostHog + Supabase Dual Analytics Architecture](#adr-0004) | 2025-01-20 | Accepted | —          | —             |
+| 0003 | [Supabase Three-Table Architecture (Sessions, Leads, Results)](#adr-0003) | 2025-01-20 | Accepted | —          | —             |
+| 0002 | [OpenAI GPT-4o-mini for AI Result Generation](#adr-0002)    | 2025-01-20 | Accepted | —          | —             |
+| 0001 | [Next.js 14 + Supabase + Vercel Stack](#adr-0001)           | 2025-01-20 | Accepted | —          | —             |
 
 <!-- END:ADR_INDEX -->
 
@@ -107,277 +104,201 @@ END ADR_AGENT_PROTOCOL
 
 ---
 
-## ADR-0001 — Embeddable TripGuide Widget MVP Architecture
+## ADR-0001 — Next.js 14 + Supabase + Vercel Stack
 
 <a id="adr-0001"></a>
-**Date**: 2025-09-06  
-**Status**: Accepted  
+**Date**: 2025-01-20
+**Status**: Accepted
 **Owner**: Development Team
 
 ### Context
 
-Outdoorable needs an embeddable widget for Webflow that generates personalized trip guides for outdoor travelers. The widget must support two user flows ("Inspire Me" and "I Know Where to Go"), integrate with external APIs, and drive conversions through email collection and expert matching.
+GPT Lead Magnet requires a scalable, serverless architecture that handles AI generation, database operations, and analytics. The system must support both web and Telegram platforms with minimal infrastructure overhead.
 
 ### Alternatives
 
-- **Standalone web app**: Full website but harder to embed and distribute
-- **WordPress plugin**: Limited to WordPress sites, smaller reach
-- **React component library**: Too technical for non-developer users
-- **Embeddable Next.js widget**: Easy to embed, self-contained, responsive
+- **Next.js + Vercel Postgres**: Simpler but lacks built-in auth and storage features
+- **Pure React SPA + Backend API**: More flexible but requires separate infrastructure
+- **Supabase only (no Next.js)**: Database-centric but lacks frontend optimization
+- **Next.js 14 + Supabase + Vercel**: Best of both worlds - serverless frontend + powerful backend
 
 ### Decision
 
-Build an embeddable Next.js widget that can be integrated into Webflow sites via iframe. The widget will be self-contained with its own API routes, responsive design, and minimal dependencies to avoid conflicts with host pages.
+Use Next.js 14 (App Router) deployed on Vercel with Supabase as backend. This provides:
+- Serverless API routes for OpenAI integration
+- Supabase PostgreSQL for sessions, leads, results storage
+- Built-in TypeScript support and type safety
+- Easy deployment and scalability on Vercel
+- Future-ready for Supabase Auth and Storage if needed
 
 ### Consequences
 
-- **Pros**: Easy integration for customers, responsive design, isolated from host page styles, scalable architecture
-- **Cons / risks**: Iframe limitations, requires proper CSP configuration, additional complexity for embedding
+- **Pros**: Serverless architecture scales automatically, Supabase free tier generous (500MB DB + 2GB bandwidth), excellent DX with TypeScript, zero infrastructure management, Vercel edge network for fast global delivery
+- **Cons / risks**: Vendor lock-in to Vercel + Supabase, cold start latency for API routes, need to monitor Supabase usage limits
 - **Supersedes**: —
 - **Superseded by**: —
 
 ### Compliance / Verification
 
-Widget successfully embeds in test Webflow sites without console errors. All functionality works within iframe constraints. Mobile responsive design validated on devices 375px and wider.
+- Next.js 14 successfully deployed on Vercel
+- Supabase client connects without errors
+- API routes respond in <2 seconds (warm)
+- Environment variables properly configured
 
 ---
 
-## ADR-0002 — Next.js Widget Architecture for Webflow Embedding
+## ADR-0002 — OpenAI GPT-4o-mini for AI Result Generation
 
 <a id="adr-0002"></a>
-**Date**: 2025-09-06  
-**Status**: Accepted  
+**Date**: 2025-01-20
+**Status**: Accepted
 **Owner**: Development Team
 
 ### Context
 
-The embeddable widget needs a robust frontend framework that supports server-side rendering, API routes, and optimized build output for fast loading in embedded contexts.
+The core value of GPT Lead Magnet is generating personalized AI results based on user questionnaire answers. The AI model must balance cost, quality, and response time.
 
 ### Alternatives
 
-- **Plain React SPA**: Simpler but lacks SSR and integrated API routes
-- **Vue.js with Nuxt**: Good framework but team expertise is in React
-- **Svelte/SvelteKit**: Smaller bundle size but less ecosystem support
-- **Next.js with App Router**: Full-stack React framework with optimized embedding features
+- **GPT-4**: Highest quality but expensive ($0.03/1K tokens) and slower
+- **GPT-4o-mini**: Good balance of quality/cost ($0.00015/1K tokens), fast
+- **GPT-3.5-turbo**: Cheapest but lower quality output
+- **Claude/Gemini**: Alternative providers but adds complexity
 
 ### Decision
 
-Use Next.js 14 with App Router, deployed on Vercel. Configure with Tailwind CSS using 'tw-' prefix to avoid styling conflicts. Implement dedicated /embed route for iframe-optimized rendering.
+Use OpenAI GPT-4o-mini as the default model for AI result generation:
+- Fast response times (2-5 seconds typical)
+- Cost-effective at $0.00015/1K input tokens
+- Sufficient quality for lead magnet content
+- Markdown output support for rich formatting
+- Easy to upgrade to GPT-4 for premium clients later
 
 ### Consequences
 
-- **Pros**: Server-side rendering, built-in API routes, optimized build output, excellent Vercel integration, familiar React patterns
-- **Cons / risks**: Larger bundle size than minimal frameworks, requires Next.js expertise
+- **Pros**: 20x cheaper than GPT-4, fast generation (<5s), good enough quality for MVP, scalable to thousands of requests, markdown formatting built-in
+- **Cons / risks**: OpenAI API dependency, rate limits need monitoring, occasional lower quality vs GPT-4, need fallback handling for API errors
 - **Supersedes**: —
 - **Superseded by**: —
 
 ### Compliance / Verification
 
-Bundle size remains under 500KB gzipped. Embed route loads in under 3 seconds. Tailwind prefix prevents styling conflicts with host pages.
+- Average generation time <5 seconds
+- Token usage tracked in `results` table
+- Cost per generation <$0.01
+- Markdown output renders properly in React
 
 ---
 
-## ADR-0003 — OpenAI Trip Guide Generation with Alfie Personality
+## ADR-0003 — Supabase Three-Table Architecture (Sessions, Leads, Results)
 
 <a id="adr-0003"></a>
-**Date**: 2025-09-06  
-**Status**: Accepted  
+**Date**: 2025-01-20
+**Status**: Accepted
 **Owner**: Development Team
 
 ### Context
 
-Trip guide generation is the core value proposition. Content must feel personalized, high-quality, and consistent with the Outdoorable brand personality (Alfie the fox). Different prompts are needed for "Inspire Me" vs "I Know Where to Go" flows.
+Database architecture must support the full lead magnet flow: questionnaire → AI generation → lead capture → CRM integration. Data must be structured for analytics while remaining flexible for schema changes.
 
 ### Alternatives
 
-- **Template-based generation**: Faster but less personalized and engaging
-- **Multiple AI providers**: More resilience but increased complexity
-- **Human-written content**: Higher quality but not scalable
-- **OpenAI with structured prompts**: Scalable, personalized, brand-consistent
+- **Single monolithic table**: Simple but inflexible and poor for analytics
+- **Sessions + Leads only**: Loses AI generation metadata and costs tracking
+- **Separate DB per entity**: Over-engineered for MVP
+- **Three tables (Sessions, Leads, Results)**: Clean separation of concerns with proper foreign keys
 
 ### Decision
 
-Use OpenAI GPT-4 with structured prompts that embed Alfie's personality and brand voice. Implement separate prompt templates for each flow type, with example outputs to ensure consistent quality and tone.
+Implement three-table Supabase architecture:
+
+**1. `sessions`** - Every quiz completion
+- UUID primary key
+- `answers` (JSONB) - flexible questionnaire data
+- `status` (started/completed/abandoned)
+- `source` (web/telegram/iframe)
+- `current_step`, `total_steps` - progress tracking
+- Metadata: user_agent, ip_address, timestamps
+
+**2. `leads`** - Contact information
+- UUID primary key, foreign key to `sessions`
+- `email` OR `telegram_id` (constraint enforces one required)
+- `name`, `phone`, `company` - optional fields
+- `status` (new/contacted/converted) - sales pipeline
+
+**3. `results`** - AI-generated content
+- UUID primary key, foreign key to `sessions`
+- `markdown` - AI output
+- `prompt_used` - audit trail
+- `model`, `tokens_used`, `generation_time_ms` - cost tracking
+- `version` - for A/B testing prompts
 
 ### Consequences
 
-- **Pros**: Highly personalized content, consistent brand voice, scalable generation, excellent output quality
-- **Cons / risks**: OpenAI API costs, rate limiting, dependency on external service
+- **Pros**: Clean data separation, flexible JSONB for answers, proper foreign keys prevent orphans, easy to add fields without migrations, tracks AI costs per session, supports both web + Telegram, ready for analytics queries
+- **Cons / risks**: Three joins needed for full session data, JSONB queries less performant than structured columns, need to maintain TypeScript types in sync
 - **Supersedes**: —
 - **Superseded by**: —
 
 ### Compliance / Verification
 
-Generated content matches Alfie personality guidelines. Trip guides follow structured format from example outputs. API response times under 30 seconds. Cost per generation monitored and optimized.
+- [x] All tables created with proper constraints
+- [x] Foreign keys enforce referential integrity
+- [x] Indexes added on email, telegram_id, session_id
+- [x] TypeScript types generated in `types/database.ts`
+- [x] `lib/supabase-queries.ts` provides type-safe CRUD functions
 
 ---
 
-## ADR-0004 — Airtable Expert Directory with Tag-Based Matching
+## ADR-0004 — PostHog + Supabase Dual Analytics Architecture
 
 <a id="adr-0004"></a>
-**Date**: 2025-09-06  
-**Status**: Accepted  
+**Date**: 2025-01-20
+**Status**: Accepted
 **Owner**: Development Team
 
 ### Context
 
-Expert matching drives business value by connecting users with travel experts. The system needs to store expert profiles and match them to users based on their questionnaire responses and trip preferences.
+Need analytics for both product behavior (funnels, A/B tests) and business data (lead quality, AI costs). Single solution either loses behavioral insights or bloats database with event logs.
 
 ### Alternatives
 
-- **Database with custom matching logic**: Full control but requires complex development
-- **Third-party matching services**: Specialized but expensive and limited customization
-- **Manual expert assignment**: Not scalable for MVP
-- **Airtable + OpenAI tagging**: Flexible expert management with intelligent automated matching
+- **Supabase only**: Store all events in DB but expensive and poor funnel visualization
+- **PostHog only**: Great for events but can't store full user answers and AI results
+- **Google Analytics**: Free but limited product analytics features
+- **PostHog + Supabase**: Best of both - events in PostHog, business data in Supabase
 
 ### Decision
 
-Use Airtable as expert directory with OpenAI-generated tags from user questionnaires to match experts. Store expert profiles with tags, specialties, and contact information in Airtable. Generate user tags from questionnaire responses and find best-matching expert.
+Use dual analytics architecture where each tool handles its strength:
+
+**PostHog** - Product analytics (behavior):
+- Events: `wizard_started`, `question_answered`, `wizard_abandoned`, `result_generated`, `lead_submitted`
+- Properties: step number, time spent, variant (for A/B tests)
+- Funnel analysis and drop-off visualization
+- Feature flags for A/B testing
+
+**Supabase** - Business data (what users said):
+- Full questionnaire answers in `sessions.answers` (JSONB)
+- Lead contact info for CRM integration
+- AI results for re-delivery to users
+- Cost tracking (tokens, generation time)
+
+**No duplication**: Never store full answers in PostHog, never store click events in Supabase.
 
 ### Consequences
 
-- **Pros**: Easy expert profile management, flexible matching logic, no database setup required, OpenAI provides intelligent tagging
-- **Cons / risks**: Airtable API rate limits, dependency on external service, matching algorithm needs tuning
+- **Pros**: PostHog shows WHERE users drop off, Supabase shows WHAT they answered when they stayed, clean separation prevents data duplication, PostHog free tier (1M events/month), easy to add materialized views in Supabase for aggregate stats, A/B testing ready with feature flags
+- **Cons / risks**: Two systems to maintain, need to correlate session_id across both, PostHog adds ~50KB to bundle size, need to handle PostHog being blocked by ad blockers
 - **Supersedes**: —
 - **Superseded by**: —
 
 ### Compliance / Verification
 
-Expert matching returns relevant matches based on user preferences. Airtable integration successfully queries expert profiles. Matching algorithm provides reasonable match scores (>0.7 for good matches).
-
----
-
-## ADR-0005 — GoHighLevel CRM Integration with Structured Field Mapping
-
-<a id="adr-0005"></a>
-**Date**: 2025-09-06  
-**Status**: Accepted  
-**Owner**: Development Team
-
-### Context
-
-GoHighLevel CRM is the single source of truth for user data and leads. The widget must collect email addresses and questionnaire responses, then structure this data into specific GoHighLevel fields for the client's workflow and follow-up processes.
-
-### Alternatives
-
-- **Generic contact creation**: Simple but loses valuable questionnaire data
-- **Custom field mapping**: Flexible but requires GoHighLevel configuration
-- **Third-party CRM integration**: More options but client already uses GoHighLevel
-- **Structured field mapping with predefined schema**: Maintains data structure for client workflows
-
-### Decision
-
-Implement structured GoHighLevel integration with specific field mapping:
-- planning_stage (Inspire Me vs I Know Where)
-- place_of_interest (destination preferences)  
-- traveler_type (solo/couple/group)
-- activity_level (low/moderate/high intensity)
-- activity_preferences (selected activities)
-- guided_preferences (independent vs guided)
-- travel_budget (budget range)
-- travel_dates (season/dates)
-- full_survey_data (complete JSON backup)
-
-### Consequences
-
-- **Pros**: Preserves all user data, enables client follow-up workflows, structured for analysis, full data backup in JSON
-- **Cons / risks**: GoHighLevel API dependency, requires field configuration, more complex integration
-- **Supersedes**: —
-- **Superseded by**: —
-
-### Compliance / Verification
-
-All questionnaire data successfully maps to GoHighLevel fields. Email collection triggers contact creation. JSON backup contains complete user responses. Integration handles API errors gracefully.
-
----
-
-## ADR-0006 — Email Gate Redesign to Inline Form
-
-<a id="adr-0006"></a>
-**Date**: 2025-09-07  
-**Status**: Accepted  
-**Owner**: Development Team
-
-### Context
-
-The previous email collection system used a popup modal that appeared immediately after content generation, which was intrusive and annoying to users. The trigger occurred too early (at 50px scroll) and had complex state management with multiple conflicting components.
-
-### Alternatives
-
-- **Modifying existing popup**: Rejected due to architectural complexity
-- **Different scroll thresholds**: 30% chosen as optimal engagement point  
-- **Different form positions**: Centered overlay chosen for maximum visibility
-- **Complete redesign to inline form**: Selected for better user experience
-
-### Decision
-
-Completely redesign email collection architecture from popup-based to inline-based system:
-- Create `InlineEmailGate` component replacing `EmailGate` popup
-- Modify `TripGuideDisplay` to use inline form instead of popup
-- Change scroll threshold from `50px` to `30%` of content
-- Form appears/disappears based on scroll position with real-time tracking
-- Simplified state management with separate boolean states instead of complex object
-- Minimalistic UI with Name + Email fields, "Unlock" button, subtle backdrop blur
-- Brief "Thank you" message for 1.5 seconds post-submission
-
-### Consequences
-
-- **Pros**: Non-intrusive inline form, appears at optimal engagement point (30%), disappears when user scrolls back, minimal visual disruption, simplified state management, cleaner component architecture, maintained CRM integration
-- **Cons / risks**: Form positioning complexity, requires proper z-index management
-- **Supersedes**: Previous popup email gate system
-- **Superseded by**: —
-
-### Compliance / Verification
-
-- [x] Inline form appears at 30% scroll
-- [x] Form disappears when scrolling back  
-- [x] Email validation works
-- [x] GoHighLevel CRM integration functional
-- [x] Mobile responsive design
-- [x] Session storage persistence
-- [x] Thank you message displays properly
-
----
-
-## ADR-0007 — GoHighLevel Field Mapping Critical Fix
-
-<a id="adr-0007"></a>
-**Date**: 2025-09-07  
-**Status**: Accepted  
-**Owner**: Development Team
-
-### Context
-
-The GoHighLevel CRM integration was failing to populate all required custom fields due to incorrect field name mappings in the API integration. Some contacts had empty fields in the CRM, making it difficult for sales follow-up and data analysis.
-
-### Alternatives
-
-- **Generic field mapping**: Keep using fallback field names but inconsistent data
-- **Manual field correction**: Time-consuming and doesn't solve root cause
-- **Flow-specific field mapping**: Map to correct questionnaire fields based on user flow type
-- **Complete field validation**: Ensure all 9 fields always have meaningful values
-
-### Decision
-
-Implement flow-aware field mapping with guaranteed field population:
-1. **Flow-Specific Logic**: Different field mappings for "inspire-me" vs "i-know-where" flows
-2. **Correct Field Names**: Map to actual questionnaire field names from randomAnswers.json
-3. **Fallback Values**: Use `ensureValue()` function to prevent empty fields with meaningful defaults
-4. **Enhanced Logging**: Add detailed field mapping logs for debugging and validation
-
-### Consequences
-
-- **Pros**: All 9 GoHighLevel fields guaranteed populated, flow-specific accurate data mapping, meaningful fallback values, enhanced debugging capabilities
-- **Cons / risks**: More complex mapping logic, requires maintenance if questionnaire structure changes
-- **Supersedes**: Previous generic field mapping approach
-- **Superseded by**: —
-
-### Compliance / Verification
-
-- [x] All 9 fields populate with meaningful data: planning_stage, place_of_interest, traveler_type, activity_level, activity_preferences, guided_preferences, travel_budget, travel_dates, full_survey_data
-- [x] Flow-specific field mapping works for both inspire-me and i-know-where
-- [x] Fallback values prevent empty fields
-- [x] Enhanced logging provides field mapping visibility
-- [x] Validated with contact IDs: H3m5d38e2YJPLS9gaHDB, BJSodsLT9acbZnzgmlD6, 5zkdvxZfLkHuimqotPTY
+- PostHog initialized in `lib/analytics.ts`
+- Events tracked at key funnel steps
+- Supabase stores only business-critical data
+- No duplication of user answers in PostHog
+- Session IDs used to correlate data across systems
 
 ---

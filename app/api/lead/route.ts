@@ -1,58 +1,81 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { nanoid } from 'nanoid'
-import { leadSubmitSchema } from '@/lib/schema'
-import { supabase } from '@/lib/supabase'
+import { createLead, getSessionWithResult } from '@/lib/supabase-queries'
 import { sendToN8N } from '@/lib/n8n'
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const validatedData = leadSubmitSchema.parse(body)
-
-    const leadId = nanoid()
-
-    const { data: lead, error: leadError } = await supabase
-      .from('leads')
-      .insert({
-        id: leadId,
-        email: validatedData.email,
-        telegram_id: validatedData.telegram_id,
-        telegram_username: validatedData.telegram_username,
-        name: validatedData.name,
-        platform: validatedData.platform,
-      })
-      .select()
-      .single()
-
-    if (leadError) {
-      console.error('Lead insert error:', leadError)
-      return NextResponse.json({ error: leadError.message }, { status: 500 })
+    const {
+      session_id,
+      email,
+      telegram_id,
+      name,
+      phone,
+      company,
+    } = body as {
+      session_id: string
+      email?: string
+      telegram_id?: number
+      name?: string
+      phone?: string
+      company?: string
     }
 
-    const { error: sessionError } = await supabase
-      .from('sessions')
-      .update({ lead_id: leadId, completed_at: new Date().toISOString() })
-      .eq('id', validatedData.session_id)
-
-    if (sessionError) {
-      console.error('Session update error:', sessionError)
+    if (!session_id) {
+      return NextResponse.json(
+        { error: 'session_id is required' },
+        { status: 400 }
+      )
     }
 
-    const { data: session } = await supabase
-      .from('sessions')
-      .select('result')
-      .eq('id', validatedData.session_id)
-      .single()
+    if (!email && !telegram_id) {
+      return NextResponse.json(
+        { error: 'Either email or telegram_id is required' },
+        { status: 400 }
+      )
+    }
 
-    try {
-      await sendToN8N(lead, validatedData.answers, session?.result || undefined)
-    } catch (n8nError) {
-      console.error('n8n webhook error:', n8nError)
+    const lead = await createLead({
+      session_id,
+      email,
+      telegram_id,
+      name,
+      phone,
+      company,
+    })
+
+    const sessionData = await getSessionWithResult(session_id)
+
+    if (sessionData) {
+      try {
+        await sendToN8N(
+          {
+            id: lead.id,
+            email: lead.email || undefined,
+            telegram_id: lead.telegram_id || undefined,
+            name: lead.name || undefined,
+            phone: lead.phone || undefined,
+            company: lead.company || undefined,
+            platform: sessionData.session.source || 'web',
+            created_at: lead.created_at,
+          },
+          Object.entries(sessionData.session.answers as Record<string, any>).map(
+            ([key, value]) => ({
+              question_id: key,
+              question_text: key,
+              answer: value,
+            })
+          ),
+          sessionData.result?.markdown
+        )
+      } catch (n8nError) {
+        console.error('n8n webhook error:', n8nError)
+      }
     }
 
     return NextResponse.json({
       success: true,
-      lead_id: leadId,
+      lead_id: lead.id,
     })
   } catch (error) {
     console.error('Lead submit error:', error)

@@ -1,81 +1,177 @@
 ---
-description:
+description: Product Requirements Document
 globs:
 alwaysApply: false
 ---
 
-# Outdoorable TripGuide Widget
+# GPT Lead Magnet
 
-**TL;DR:** For outdoor travelers, build an embeddable widget (Webflow) that generates a personalized Trip Guide and connects them with the right expert, so they can plan their trip faster and with confidence.
+**TL;DR:** SaaS platform that lets businesses create AI-powered lead magnets. Users answer a questionnaire, get personalized AI-generated results, and businesses capture qualified leads with full context.
 
 ---
 
 ## Users & Value
 
-- **Primary user / persona:** Outdoor enthusiasts (mainly from US/EU) looking to plan trips more efficiently.  
-- **Jobs-to-be-done (JTBD):**
-  - When I don’t know where to travel, I want tailored recommendations, so I can choose a destination.  
-  - When I already know where I want to go, I want a clear, structured guide, so I can plan my trip smoothly.  
-  - When I’m exploring options, I want to easily connect with a local expert, so I can get trusted advice.  
+### Primary Users
+
+**1. Business Owners / Marketers** (B2B customers)
+- Coaches, consultants, agencies, SaaS founders
+- Need: Generate qualified leads with context about their needs
+- Pain: Generic lead forms capture email but no qualification data
+
+**2. End Users** (B2C visitors)
+- Potential customers visiting business websites
+- Need: Get personalized value (guide, report, recommendation) before sharing contact info
+- Pain: Tired of giving email for generic PDFs
+
+### Jobs-to-be-done (JTBD)
+
+**For Business Owners:**
+- When I want to capture leads, I need to know their specific needs and challenges, so I can personalize my sales outreach
+- When I run ads, I want a high-converting lead magnet, so my cost-per-lead stays profitable
+- When I collect emails, I want them automatically sent to my CRM with full context, so my sales team can follow up intelligently
+
+**For End Users:**
+- When I'm researching solutions, I want personalized recommendations based on my situation, so I don't waste time on generic content
+- When I share my email, I want immediate value (not "we'll send it later"), so I feel the exchange is fair
 
 ---
 
 ## Success Metrics
 
-- **Primary Goal:** Users receive a personalized Trip Guide, leave their e-mail, and get matched with an expert.  
-- **Success Criteria:**  
-  - % of users who complete the questionnaire → receive a Trip Guide (target: >50%)  
-  - % of users who submit e-mail (target: >30%)  
-  - % of users who view expert card (target: >20%)  
+### Primary Goals (MVP)
+- **Lead Capture Rate:** >40% of users who complete questionnaire submit email
+- **Session Completion Rate:** >60% of users who start questionnaire finish it
+- **CRM Integration Success:** 100% of leads flow to n8n webhook without errors
+
+### Secondary Metrics (Post-MVP)
+- **Lead Quality Score:** Businesses rate leads as "qualified" >70% of the time
+- **Time-to-First-Lead:** <5 minutes from signup to first captured lead
+- **Cost per Generation:** <$0.01 per AI result (using GPT-4o-mini)
 
 ---
 
 ## Scope
 
-| Must-have (MVP)                                                                 | Nice-to-have (Later)                        | Explicitly Out (Not now)              |
-| -------------------------------------------------------------------------------- | ------------------------------------------- | ------------------------------------- |
-| Two flows: *Inspire Me* and *I Know Where to Go*                                 | Calendar integration (Calendly links)       | Native mobile app                     |
-| Trip Guide generation via OpenAI (formatted for readability)                     | Expert video messages (Loom, async consult) | Complex marketplace functionality     |
-| Partial access to Trip Guide (50%) until e-mail is submitted                     | Payments integration                        | Social network/community features     |
-| Collect e-mail + answers → send to GoHighLevel CRM                               | Expert reviews & rating system              | VR/AR features                        |
-| Expert matching via Airtable (tags + OpenAI selection logic)                     | A/B testing of flows and copy               | Offline events                        |
-| Easy embed in Webflow, responsive for mobile & desktop                           | AI-driven chat with expert                  |                                       |
+| Must-have (MVP)                                                                 | Nice-to-have (V2)                           | Explicitly Out (Not now)              |
+| ------------------------------------------------------------------------------- | ------------------------------------------- | ------------------------------------- |
+| Wizard-style questionnaire (configurable questions)                             | Multi-tenant dashboard for clients          | Native mobile app                     |
+| AI result generation via OpenAI (markdown formatted)                            | White-label branding per client             | Payment processing                    |
+| Email gate after viewing result                                                 | A/B testing different prompts/questions     | Advanced CRM (we use n8n webhooks)    |
+| Lead data sent to n8n webhook (for CRM integration)                             | PDF export of results                       | Built-in email sending                |
+| Embeddable widget (iframe) for websites                                         | Telegram Bot for lead collection            | Video generation                      |
+| Responsive design (mobile + desktop)                                            | Analytics dashboard (PostHog integration)   | Blockchain/Web3 features              |
+| Supabase DB: sessions, leads, results                                           | Custom domain per client                    | Social sharing                        |
 
-- **Definition of Done (MVP):**
-  - [ ] User can complete one of the two flows.  
-  - [ ] Personalized Trip Guide is generated and displayed in a clean format.  
-  - [ ] After ~50% scroll, user is prompted to submit e-mail.  
-  - [ ] E-mail + answers are successfully sent to GoHighLevel.  
-  - [ ] Expert card (from Airtable) is displayed with avatar, name, description, and link.  
-  - [ ] Widget runs without critical bugs on Webflow (desktop + mobile).  
+### Definition of Done (MVP)
+
+**Core Flow Working:**
+- [ ] User starts questionnaire → session created in Supabase
+- [ ] User answers questions → answers saved to `sessions.answers` (JSONB)
+- [ ] AI generates result → saved to `results` table with cost tracking
+- [ ] User submits email → lead created, linked to session
+- [ ] n8n webhook receives: lead info + answers + AI result
+- [ ] All data queryable via Supabase for analytics
+
+**Technical Requirements:**
+- [ ] Widget embeds in test site via iframe without errors
+- [ ] Mobile responsive (works on 375px+ screens)
+- [ ] AI generation completes in <10 seconds
+- [ ] All API routes have error handling
+- [ ] TypeScript types match Supabase schema
+
+**Documentation:**
+- [ ] README with setup instructions
+- [ ] .env.local.example with all required variables
+- [ ] SQL schema ready to run in Supabase
+- [ ] ADR documents up to date
 
 ---
 
 ## Tech Stack
 
-### Frontend:
-- React (Next.js on Vercel for deployment)  
-- Existing CSS design (from previous iteration) adapted for the widget  
-- Tailwind optional (only if needed for responsiveness/adaptation)  
+### Frontend
+- **Framework:** Next.js 14 (App Router)
+- **Styling:** Tailwind CSS + Radix UI components
+- **Forms:** react-hook-form + Zod validation
+- **Markdown:** react-markdown + remark-gfm
 
-### Backend:
-- Vercel Functions (Node.js)  
-- OpenAI API → generate Trip Guide + tagging for expert matching  
-- Airtable API → query experts based on tags  
-- GoHighLevel API → store e-mails and user answers  
+### Backend
+- **Deployment:** Vercel (serverless)
+- **Database:** Supabase (PostgreSQL)
+- **AI:** OpenAI GPT-4o-mini
+- **CRM Integration:** n8n webhooks
+- **Analytics:** PostHog (events) + Supabase (business data)
 
-### Database:
-- None. GoHighLevel CRM is the **only source of truth** for user data.  
-- Airtable is the source of truth for expert directory.  
+### Database Schema
+- **sessions:** Quiz completions (answers in JSONB, status tracking)
+- **leads:** Contact info (email/telegram_id, session FK)
+- **results:** AI-generated content (markdown, tokens, generation time)
+
+---
+
+## User Flows
+
+### Flow 1: Web Widget (Primary MVP)
+
+```
+1. User lands on business website
+2. Clicks "Get Your Free [Guide/Report/Plan]"
+3. Widget opens (in page or iframe)
+4. User answers 3-7 questions (wizard style)
+5. "Generate my result" → API call → OpenAI
+6. Result displays (markdown rendered, nicely formatted)
+7. Email gate appears: "Enter email to save your result"
+8. User submits email + name
+9. Lead sent to n8n webhook → flows to CRM
+10. "Thank you! Check your email" message
+```
+
+### Flow 2: Telegram Mini App (V2 - Future)
+
+```
+1. User clicks Telegram bot link
+2. Mini App opens with questionnaire
+3. Same questionnaire flow as web
+4. NO email gate (already have telegram_id)
+5. Result sent directly in Telegram
+6. Lead captured with telegram_id instead of email
+```
 
 ---
 
 ## Open Questions
 
-1. **Monetization:** Should MVP already include CTA to book a paid consultation with experts?  
-2. **Trip Guide format:** Text-only, or enriched with maps/links (Google Maps, AllTrails, etc.)?  
-3. **Expert card content:** Minimum set (avatar, name, description, link) — add pricing/availability now or later?  
-4. **Follow-up:** After e-mail submission, do we send guide/summary via e-mail automatically, or keep it inside the widget only for MVP?  
-5. **Frontend stack:** Stick with Next.js + Vercel for consistency, or simplify with pure React embed since Webflow is the host?  
+### Critical (Must decide for MVP)
+1. ~~**Database:** Supabase vs Vercel Postgres?~~ ✅ **DECIDED: Supabase** (more features, generous free tier)
+2. ~~**AI Model:** GPT-4 vs GPT-4o-mini?~~ ✅ **DECIDED: GPT-4o-mini** (20x cheaper, good enough quality)
+3. **Email Delivery:** Does widget send email with result, or just CRM followup?
+   - **Leaning:** No email from widget, n8n handles it via webhook
+4. **Multi-tenancy:** Support multiple clients in MVP, or single-tenant only?
+   - **Leaning:** Single-tenant for MVP, add `client_id` to schema for future
+
+### Nice-to-know (Can defer)
+5. **Result Storage:** Keep results in Supabase or external storage (S3)?
+   - **Current:** Markdown text in `results` table (simple, no files)
+6. **Session Timeout:** How long before abandoned sessions are cleaned up?
+   - **Current:** No cleanup, keep all data for analytics
+7. **Rate Limiting:** Prevent abuse of free AI generations?
+   - **Current:** Rely on Vercel function limits, add later if needed
+
+---
+
+## Success Criteria for Launch
+
+### Before showing to first customer:
+- [ ] Core flow works end-to-end (questionnaire → AI → email → n8n)
+- [ ] Widget embeds on test site cleanly
+- [ ] Error handling prevents crashes
+- [ ] Cost per lead <$0.05 (mostly OpenAI cost)
+
+### Before charging money:
+- [ ] Dashboard shows captured leads
+- [ ] Lead data quality validated (meaningful answers, no spam)
+- [ ] Webhook reliability >99% (retry logic if n8n fails)
+- [ ] Documentation good enough for self-service setup
 
 ---
