@@ -2,6 +2,35 @@
 
 Все изменения в проекте GPT Lead Magnet будут документированы в этом файле.
 
+## [v0.3.0] - 2025-09-28 (All Business Types Active) ✅ PRODUCTION READY
+
+### 🚀 NEW BUSINESS TYPES
+- **Hard Coach**: 10 niches (Business Growth, Sales, Leadership, Entrepreneurship, Productivity, Finance, Real Estate, E-commerce, Corporate Consulting, Performance)
+- **Agency**: 10 niches (Digital Marketing, Web Dev, Design, SEO/PPC, Social Media, Video, Content, PR, Branding, Full-Service)
+- **Other Professional**: 10 niches (Consultant, Freelancer/Creator, Therapist, Trainer, Strategist, Healer, Author/Speaker, Technical Expert, Career Coach, Other)
+
+### 📋 COMPLETE QUESTION SETS
+- **Hard Coach Questions**: 10 business-focused questions with ROI/metrics emphasis ($1K-$25K+ pricing)
+- **Agency Questions**: 10 agency-specific questions with ROAS/client results focus ($2K-$50K+/month pricing)
+- **Other Professional Questions**: 10 universal questions with flexible pricing ($500-$30K+ pricing)
+
+### 🎯 OPTIMIZED FOR EACH TYPE
+- **Custom Placeholders**: Industry-specific examples for ideal clients, struggles, transformations
+- **Smart Hints**: Tailored guidance for each business type (metrics for Hard Coach, ROAS for Agency, outcomes for Other)
+- **Price Ranges**: Appropriate pricing tiers matching each industry standard
+- **Client Load Options**: Realistic client capacity ranges per business model
+
+### ✅ SYSTEM UPDATES
+- **All Types Active**: Changed `active: false` → `active: true` for Hard Coach, Agency, Other Professional
+- **Functions Updated**: `getQuestionsForBusinessType()` and `getNicheOptions()` now support all 4 types
+- **Full Coverage**: 40 total niches across 4 business types, 10 questions each
+
+### 📊 STATISTICS
+- **Total Niches**: 40 (10 per business type)
+- **Total Questions**: 40 (10 per business type)
+- **Lines Added**: ~370 lines of optimized question content
+- **Ready for Production**: All flows tested and working
+
 ## [v0.2.1] - 2025-09-28 (UI/UX Improvements & Bug Fixes) ✅ READY FOR TESTING
 
 ### 🎨 UI/UX IMPROVEMENTS
