@@ -14,6 +14,25 @@ export interface Question {
   hasOtherOption?: boolean; // For multi-with-other type
 }
 
+// ===== SHARED CONSTANTS (DRY - Don't Repeat Yourself) =====
+// Reused across multiple business types
+
+export const PRICE_RANGES = [
+  'Under $500',
+  '$500 - $2,000',
+  '$2,000 - $5,000',
+  '$5,000 - $10,000',
+  '$10,000+'
+];
+
+export const CLIENT_LOAD_OPTIONS = [
+  'Looking for my first clients',
+  '1-5 active clients',
+  '6-15 active clients',
+  '15+ active clients',
+  'Waitlist/fully booked'
+];
+
 export interface BusinessType {
   id: string;
   name: string;
@@ -132,13 +151,7 @@ const SOFT_COACH_QUESTIONS: Question[] = [
     id: 'average_price',
     text: 'Average service price',
     type: 'single-choice',
-    options: [
-      'Under $500',
-      '$500 - $2,000',
-      '$2,000 - $5,000',
-      '$5,000 - $10,000',
-      '$10,000+'
-    ],
+    options: PRICE_RANGES,
     helpText: 'Helps us match your magnet sophistication to your service level',
     required: true
   },
@@ -146,13 +159,7 @@ const SOFT_COACH_QUESTIONS: Question[] = [
     id: 'client_load',
     text: 'Current client load',
     type: 'single-choice',
-    options: [
-      'Looking for my first clients',
-      '1-5 active clients',
-      '6-15 active clients',
-      '15+ active clients',
-      'Waitlist/fully booked'
-    ],
+    options: CLIENT_LOAD_OPTIONS,
     helpText: 'Helps us understand your business stage for follow-up',
     required: true
   }
@@ -407,110 +414,114 @@ const AGENCY_QUESTIONS: Question[] = [
 ];
 
 // ===== OTHER PROFESSIONAL NICHES =====
+// Note: "Other Professional" doesn't use niche dropdown anymore
+// Instead, users type their profession directly (more flexible for fallback category)
 export const OTHER_PROFESSIONAL_NICHES = [
-  { id: 'consultant', name: 'Consultant', description: 'Business consulting, advisory, specialist expertise' },
-  { id: 'freelancer-creator', name: 'Freelancer/Creator', description: 'Independent professional, content creator, solopreneur' },
-  { id: 'therapist-counselor', name: 'Therapist/Counselor', description: 'Mental health, therapy, counseling services' },
-  { id: 'trainer-educator', name: 'Trainer/Educator', description: 'Training programs, workshops, education' },
-  { id: 'strategist', name: 'Strategist', description: 'Strategic planning, advisory, implementation' },
-  { id: 'healer-practitioner', name: 'Healer/Practitioner', description: 'Alternative healing, holistic practices' },
-  { id: 'author-speaker', name: 'Author/Speaker', description: 'Writing, speaking, thought leadership' },
-  { id: 'technical-expert', name: 'Technical Expert', description: 'IT, software, technical specialization' },
-  { id: 'career-coach', name: 'Career Coach', description: 'Career guidance, job transitions, professional development' },
-  { id: 'other-specialist', name: 'Other Specialist', description: 'Other professional service or expertise' }
+  { id: 'other', name: 'Other Professional', description: 'Any professional service or expertise' }
 ];
 
 // ===== OTHER PROFESSIONAL QUESTIONS =====
+// Generic fallback questions for any professional not covered by specific categories
 const OTHER_PROFESSIONAL_QUESTIONS: Question[] = [
   {
-    id: 'niche',
-    text: 'What\'s your professional specialty?',
-    type: 'single-choice',
-    options: OTHER_PROFESSIONAL_NICHES.map(niche => niche.name),
-    required: true,
-    helpText: 'This helps us customize your lead magnet language and examples'
+    id: 'profession',
+    text: 'What is your profession or area of expertise?',
+    type: 'text',
+    placeholder: 'e.g., Financial advisor, Therapist, Real estate agent, Nutritionist, Interior designer, Lawyer...',
+    hint: '💡 Be specific - this helps us tailor your lead magnet to your industry',
+    helpText: 'We use this to customize language and examples for your field',
+    fieldSize: 'medium',
+    required: true
   },
   {
     id: 'ideal_clients',
-    text: 'Who are your ideal clients?',
+    text: 'Who are the people you work with or serve?',
     type: 'text',
-    placeholder: 'e.g., Mid-career professionals in tech (ages 35-45) who feel stuck in their current role and want to transition to leadership positions without starting over',
-    hint: '💡 Be specific about demographics, situation, and their main goal. The more detail, the better your magnet!',
-    helpText: 'We\'ll use this to write in your clients\' language',
+    placeholder: 'Describe them: age range, profession, life stage, income level, location, specific situation...',
+    hint: '💡 Paint a picture of your ideal person - who benefits most from your expertise?',
+    helpText: 'The more specific you are, the better we can personalize your lead magnet',
     fieldSize: 'medium',
     required: true
   },
   {
     id: 'main_struggle',
-    text: 'What\'s their main struggle?',
+    text: 'What are the top 3 challenges or problems they face?',
     type: 'text',
-    placeholder: 'e.g., They feel invisible at work despite years of experience. They\'re passed over for promotions, lack executive presence, and don\'t know how to position themselves for leadership roles. They fear they\'ve peaked.',
-    hint: '💡 Describe their frustration and what\'s blocking them. What keeps them stuck?',
-    helpText: 'This becomes the core problem your magnet solves',
-    fieldSize: 'medium',
+    placeholder: 'List their biggest struggles, pain points, or frustrations related to what you help with...',
+    hint: '💡 What keeps them up at night? What problem brought them to you?',
+    helpText: 'This becomes the core problem your lead magnet addresses',
+    fieldSize: 'large',
     required: true
   },
   {
     id: 'transformation',
-    text: 'What transformation do you provide?',
+    text: 'What outcome or transformation do people experience after working with you?',
     type: 'text',
-    placeholder: 'e.g., From overlooked individual contributor → Recognized leader with executive presence. They get promoted within 6-12 months, command respect in meetings, and position themselves for C-suite roles. Salary increases 30-50%.',
-    hint: '💡 Paint the before/after picture. Include timeline and tangible outcomes',
-    helpText: 'This becomes your magnet\'s main promise',
+    placeholder: 'Describe the "before and after" - what changes for them? What do they achieve or become?',
+    hint: '💡 Focus on results and impact, not just your process. What\'s different in their life?',
+    helpText: 'This becomes your lead magnet\'s value proposition',
     fieldSize: 'large',
     required: true
   },
   {
-    id: 'unique_method',
-    text: 'What\'s your unique method or approach?',
+    id: 'services_offered',
+    text: 'What services or solutions do you provide?',
     type: 'text',
-    placeholder: 'e.g., The LEADER Blueprint: L-Leadership brand, E-Executive presence, A-Advocate network, D-Decision-making authority, E-Elevated positioning, R-Results showcase. 90% of clients promoted within 12 months.',
-    hint: '💡 Give it a name if you have one. Explain your key steps and track record',
-    helpText: 'This becomes the framework inside your lead magnet',
+    placeholder: 'Describe what you offer and how you help solve their problems...',
+    hint: '💡 Your core offering - what do people hire you for or buy from you?',
+    helpText: 'This helps us understand your business model',
     fieldSize: 'large',
     required: true
   },
   {
-    id: 'unique_advantage',
-    text: 'What makes you different from others in your field?',
+    id: 'unique_approach',
+    text: 'What makes your approach or method unique?',
     type: 'text',
-    placeholder: 'e.g., I was a VP at Google who rose from engineer to executive in 7 years. I know exactly what leadership looks for in promotions because I made those decisions for 10 years.',
-    hint: '💡 Your credentials, experience, or unique perspective. What\'s your unfair advantage?',
-    helpText: 'This adds credibility and authority to your magnet',
-    fieldSize: 'medium',
-    required: true
-  },
-  {
-    id: 'discovery_questions',
-    text: 'What key questions do you ask new clients?',
-    type: 'text',
-    placeholder: 'e.g., What role do you want in 2 years? What\'s blocking you from that next step? How do you currently show up in leadership meetings? What do you want to be known for professionally?',
-    hint: '💡 List 3-5 questions that help assess their situation and readiness',
-    helpText: 'We\'ll include these as self-assessment tools in your magnet',
+    placeholder: 'What do you do differently than others in your field? Your philosophy, methodology, or secret sauce...',
+    hint: '💡 Your unique perspective, proprietary process, or special framework',
+    helpText: 'This differentiates your lead magnet from generic content',
     fieldSize: 'large',
     required: true
   },
   {
-    id: 'surprising_insight',
-    text: 'What\'s one surprising insight about your niche?',
+    id: 'common_objections',
+    text: 'What doubts or concerns do people have before working with you?',
     type: 'text',
-    placeholder: 'e.g., Technical skills get you to mid-level, but 85% of promotions to leadership are based on perception and executive presence - not actual job performance',
-    hint: '💡 What myth do you bust? What counterintuitive truth do people need to know?',
-    helpText: 'This creates a unique angle that makes your magnet stand out',
-    fieldSize: 'medium',
+    placeholder: 'E.g., "Too expensive", "Not sure it will work for me", "No time", "Already tried similar things"...',
+    hint: '💡 What stops people from saying yes? What questions do they ask?',
+    helpText: 'Understanding objections helps create a more persuasive lead magnet',
+    fieldSize: 'large',
+    required: false
+  },
+  {
+    id: 'industry_specifics',
+    text: 'Is there anything specific about your industry or niche we should know?',
+    type: 'text',
+    placeholder: 'Regulations, trends, common misconceptions, seasonal factors, terminology...',
+    hint: '💡 Context that helps us understand your market better',
+    helpText: 'Industry-specific details make your lead magnet more relevant and credible',
+    fieldSize: 'large',
+    required: false
+  },
+  {
+    id: 'lead_magnet_goal',
+    text: 'What do you want to achieve with your lead magnet?',
+    type: 'single-choice',
+    options: [
+      'Build email list',
+      'Qualify leads for my service',
+      'Educate prospects about my approach',
+      'Pre-sell or warm up for offer',
+      'Establish authority in my niche'
+    ],
+    helpText: 'Your main goal shapes the type and content of your lead magnet',
     required: true
   },
   {
     id: 'average_price',
     text: 'Average service price',
     type: 'single-choice',
-    options: [
-      'Under $500',
-      '$500 - $2,000',
-      '$2,000 - $10,000',
-      '$10,000 - $30,000',
-      '$30,000+'
-    ],
+    options: PRICE_RANGES,
     helpText: 'Helps us match your magnet sophistication to your service level',
     required: true
   },
@@ -518,14 +529,8 @@ const OTHER_PROFESSIONAL_QUESTIONS: Question[] = [
     id: 'client_load',
     text: 'Current client load',
     type: 'single-choice',
-    options: [
-      'Looking for my first clients',
-      '1-5 active clients',
-      '6-15 active clients',
-      '15-30 active clients',
-      'Waitlist/fully booked'
-    ],
-    helpText: 'Helps us understand your business stage for follow-up',
+    options: CLIENT_LOAD_OPTIONS,
+    helpText: 'Helps us understand your business stage',
     required: true
   }
 ];
